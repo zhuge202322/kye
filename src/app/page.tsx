@@ -34,7 +34,7 @@ const servicesData: Service[] = [
  {
  title: 'Standard & OEM Manufacturing',
  tagline: 'Built to Your Requirements.',
- img: '/img/lanchuang/factory-1.jpg',
+ img: '/img/services/standard-oem.jpg',
  desc: 'We manufacture a full range of standard and OEM fasteners, supporting international standards as well as customer drawings for engineering, construction, new energy, steel structure, machinery and other industries.',
  icon: (
  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +45,7 @@ const servicesData: Service[] = [
  {
  title: 'Reliable Production',
  tagline: 'Consistency in Every Batch.',
- img: '/img/lanchuang/factory-2.jpg',
+ img: '/img/services/production-machining.jpg',
  desc: 'Complete production lines, advanced processing equipment and experienced manufacturing teams help us maintain stable product performance, consistent dimensions and dependable delivery schedules.',
  icon: (
  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +56,7 @@ const servicesData: Service[] = [
  {
  title: 'Strict Quality Control',
  tagline: 'Quality at Every Stage.',
- img: '/img/lanchuang/bolt-flange-2.png',
+ img: '/img/services/quality-control.jpg',
  desc: 'Our quality control system covers production and inspection to ensure that each order meets the agreed standard, dimensional and performance requirements before delivery.',
  icon: (
  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +68,7 @@ const servicesData: Service[] = [
  {
  title: 'Surface Treatment Options',
  tagline: 'Protection for Every Environment.',
- img: '/img/lanchuang/washer-zinc-plated.png',
+ img: '/img/services/surface-treatment.jpg',
  desc: 'Choose from hot-dip galvanizing, electro-galvanizing, blackening, Dacromet and mechanical galvanizing to meet different appearance and anti-corrosion requirements.',
  icon: (
  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -621,13 +621,20 @@ export default function Home() {
 
  <div className="relative w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 items-center">
  
- {/* 左侧：企业工厂图片 */}
+ {/* 左侧：企业视频 */}
  <div className="w-full lg:w-[55%] relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] group border border-white/10">
- <img 
- src="/img/lanchuang/factory-2.jpg"
- alt="Handan Lanchuang production line"
- className="w-full h-auto aspect-[16/10] object-cover transform group-hover:scale-105 transition-transform duration-1000 ease-out" 
- />
+ <video
+ autoPlay
+ muted
+ loop
+ playsInline
+ preload="metadata"
+ poster="/img/lanchuang/factory-2.jpg"
+ aria-label="Handan Lanchuang fastener production"
+ className="w-full aspect-[16/10] object-cover transform group-hover:scale-105 transition-transform duration-1000 ease-out"
+ >
+ <source src="/video/company-profile.mp4" type="video/mp4" />
+ </video>
  <div className="absolute inset-0 bg-gradient-to-tr from-[#0a0f1c]/50 via-transparent to-transparent group-hover:opacity-0 transition-opacity duration-700 pointer-events-none"></div>
  </div>
  
