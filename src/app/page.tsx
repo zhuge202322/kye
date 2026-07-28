@@ -1,27 +1,41 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import gsap from 'gsap';
 import Lenis from 'lenis';
 import productsData from './products_data.json';
 
+type Product = {
+ Category: string;
+ 'Product Name': string;
+ Thumbnail: string;
+ 'Description HTML': string;
+};
+
+type Service = {
+ title: string;
+ tagline: string;
+ img: string;
+ desc: string;
+ icon: ReactNode;
+};
+
+const products = productsData as Product[];
+
 // 提取所有不重复的分类名称，并为每个分类寻找一张代表图片
-const categories = Array.from(new Set(productsData.map((p: any) => p.Category)));
-const categoryCards = categories.map((cat, idx) => {
- const localImages = ['/img/01.png', '/img/02.png', '/img/03.png', '/img/04.png'];
- return {
+const categories = Array.from(new Set(products.map((product) => product.Category)));
+const categoryCards = categories.map((cat) => ({
  name: cat as string,
- image: localImages[idx] || '/img/01.png',
- };
-});
+ image: products.find((product) => product.Category === cat)?.Thumbnail || '/img/lanchuang/factory-1.jpg',
+}));
 
 // 服务支持区数据 (首页与服务页共用)
-const servicesData = [
+const servicesData: Service[] = [
  {
- title: 'Customized research and development',
- tagline: 'Tailored to Every Market.',
- img: '/img/services1.png',
- desc: "The company's products are exported to more than 30 countries around the world, and can support personalized customization services for appearance, configuration, and parameters according to different market needs and policy standards, in line with local regulations and user usage habits, and help differentiate the market.",
+ title: 'Standard & OEM Manufacturing',
+ tagline: 'Built to Your Requirements.',
+ img: '/img/lanchuang/factory-1.jpg',
+ desc: 'We manufacture a full range of standard and OEM fasteners, supporting international standards as well as customer drawings for engineering, construction, new energy, steel structure, machinery and other industries.',
  icon: (
  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -30,9 +44,9 @@ const servicesData = [
  },
  {
  title: 'Reliable Production',
- tagline: 'Engineered With Precision.',
- img: '/img/services2.png',
- desc: 'We implement perfect production processes and high-standard quality inspection specifications, strictly enforce every process from production and processing to finished product testing, and continue to stably output high-quality products to ensure compliant product delivery.',
+ tagline: 'Consistency in Every Batch.',
+ img: '/img/lanchuang/factory-2.jpg',
+ desc: 'Complete production lines, advanced processing equipment and experienced manufacturing teams help us maintain stable product performance, consistent dimensions and dependable delivery schedules.',
  icon: (
  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -40,10 +54,10 @@ const servicesData = [
  )
  },
  {
- title: 'Global Logistics',
- tagline: 'Delivered Anywhere, Worry-Free.',
- img: '/img/services3.png',
- desc: 'Global logistics solutions, reinforce protective packaging, strictly control warehousing, packing, and transportation processes to ensure intact transportation and stable timeliness, and achieve efficient, safe and worry-free product delivery for overseas customers.',
+ title: 'Strict Quality Control',
+ tagline: 'Quality at Every Stage.',
+ img: '/img/lanchuang/bolt-flange-2.png',
+ desc: 'Our quality control system covers production and inspection to ensure that each order meets the agreed standard, dimensional and performance requirements before delivery.',
  icon: (
  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -52,10 +66,10 @@ const servicesData = [
  )
  },
  {
- title: 'After-sales Support',
- tagline: 'Always By Your Side.',
- img: '/img/services4.png',
- desc: 'Global intimate after-sales service, about any questions about the product, we provide professional technical guidance, quick response, timely service, escort for customers, the whole process is worry-free.',
+ title: 'Surface Treatment Options',
+ tagline: 'Protection for Every Environment.',
+ img: '/img/lanchuang/washer-zinc-plated.png',
+ desc: 'Choose from hot-dip galvanizing, electro-galvanizing, blackening, Dacromet and mechanical galvanizing to meet different appearance and anti-corrosion requirements.',
  icon: (
  <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -68,58 +82,93 @@ const servicesData = [
 const scenariosData = [
  {
  id: "01",
- title: "Beach & Resort Transportation",
- desc: "Providing comfortable and elegant sightseeing transportation for tourists, perfect for scenic areas and coastal resorts.",
- bgImg: "/img/scenario-beach.png",
+ title: "Construction & Engineering",
+ desc: "Standard and customized fastening solutions for building, infrastructure and engineering projects.",
+ bgImg: "/img/lanchuang/anchor-wedge-1.png",
  },
  {
  id: "02",
- title: "Village & Community Daily Mobility",
- desc: "Compact and efficient electric mobility for daily shopping, commuting and community transportation needs.",
- bgImg: "/img/scenario-village.png",
+ title: "New Energy & Photovoltaic",
+ desc: "Reliable fasteners and customized metal components for photovoltaic and new energy installations.",
+ bgImg: "/img/lanchuang/bolt-zinc-plated.png",
  },
  {
  id: "03",
- title: "Golf Course Service Vehicles",
- desc: "Quiet, eco-friendly electric golf carts designed for golf courses, clubs and private estates.",
- bgImg: "/img/scenario-golf.png",
+ title: "Steel Structures",
+ desc: "Bolts, nuts, rods and anchors supplied for structural steel connection requirements.",
+ bgImg: "/img/lanchuang/bolt-hex-2.png",
  },
  {
  id: "04",
- title: "Pickup Truck for Business & Leisure",
- desc: "Versatile electric pickup trucks taking you beyond your dreams — work and play combined.",
- bgImg: "/img/application4-1.webp",
+ title: "Machinery & Equipment",
+ desc: "Consistent industrial fasteners for equipment manufacturing, assembly and maintenance.",
+ bgImg: "/img/lanchuang/bolt-allen-1.png",
  },
  {
  id: "05",
- title: "Hotel & Scenic Area Mobility",
- desc: "Elegant and comfortable electric passenger vehicles for hotels, parks and tourist attractions.",
- bgImg: "/img/application2.webp",
+ title: "Mining Applications",
+ desc: "Fasteners and related accessories produced for demanding mining industry requirements.",
+ bgImg: "/img/lanchuang/rod-high-tensile-1.png",
  },
  {
  id: "06",
- title: "Urban Logistics & Delivery",
- desc: "Efficient and eco-friendly delivery vehicles designed for last-mile urban logistics.",
- bgImg: "/img/shipfnegmian-1.webp",
+ title: "Railway Fittings",
+ desc: "Standard and OEM fastening components for railway equipment and supporting projects.",
+ bgImg: "/img/lanchuang/nut-nylon-lock-1.png",
  }
+];
+
+const heroSlides = [
+ {
+ src: '/img/hero/metal-fabrication.jpg',
+ alt: 'Industrial metal fabrication with precision grinding',
+ position: 'object-center',
+ },
+ {
+ src: '/img/hero/precision-engineering.jpg',
+ alt: 'Precision engineering drawings and industrial design tools',
+ position: 'object-center',
+ },
+ {
+ src: '/img/hero/industrial-equipment.jpg',
+ alt: 'Modern industrial production equipment and metal pipework',
+ position: 'object-center',
+ },
 ];
 
 export default function Home() {
  const [currentId, setCurrentId] = useState('home');
- const [activeService, setActiveService] = useState(0);
  const [activeScenario, setActiveScenario] = useState(0);
  const [activeCategory, setActiveCategory] = useState('All');
- const [selectedProduct, setSelectedProduct] = useState<any>(null);
- const [selectedServiceDetail, setSelectedServiceDetail] = useState<any>(null);
+ const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+ const [selectedServiceDetail, setSelectedServiceDetail] = useState<(Service & { index: number }) | null>(null);
  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+ const [activeHeroSlide, setActiveHeroSlide] = useState(0);
+ const [heroPaused, setHeroPaused] = useState(false);
  const isTransitioning = useRef(false);
  const stageRef = useRef<HTMLDivElement>(null);
  const lenisRef = useRef<Lenis | null>(null);
  const detailContentRef = useRef<HTMLDivElement>(null);
+ const transitionToRef = useRef<((id: string, skip?: boolean) => void) | null>(null);
 
  const filteredProducts = activeCategory === 'All' 
- ? productsData 
- : productsData.filter((p: any) => p.Category === activeCategory);
+ ? products
+ : products.filter((product) => product.Category === activeCategory);
+
+ useEffect(() => {
+ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ if (heroPaused || reducedMotion) return;
+
+ const timer = window.setInterval(() => {
+ setActiveHeroSlide((slide) => (slide + 1) % heroSlides.length);
+ }, 6000);
+
+ return () => window.clearInterval(timer);
+ }, [heroPaused]);
+
+ const changeHeroSlide = (direction: number) => {
+ setActiveHeroSlide((slide) => (slide + direction + heroSlides.length) % heroSlides.length);
+ };
 
  // 初始化阻尼滚动 (Lenis 动态绑定到当前页面)
  useEffect(() => {
@@ -195,9 +244,7 @@ export default function Home() {
  }, []);
 
  // 用 ref 承载 transitionTo，供 popstate 监听器拿到最新版本
- const transitionToRef = useRef<((id: string, skip?: boolean) => void) | null>(null);
-
- const transitionTo = (targetId: string, skipHistory = false) => {
+ const transitionTo = useCallback((targetId: string, skipHistory = false) => {
  if (targetId === currentId || isTransitioning.current) return;
  isTransitioning.current = true;
 
@@ -240,10 +287,12 @@ export default function Home() {
  duration: 0.8,
  ease: "power3.inOut" 
  }, 0.1);
- };
+ }, [currentId]);
 
  // 每次渲染同步最新 transitionTo 到 ref
+ useEffect(() => {
  transitionToRef.current = transitionTo;
+ }, [transitionTo]);
 
  const navItems = [
  { id: 'home', label: 'Home' },
@@ -260,10 +309,7 @@ export default function Home() {
  
  {/* 列 1: 品牌与引导 */}
  <div className="w-full md:w-1/4 flex flex-col items-start">
- <div className="mb-6 flex items-baseline gap-2 leading-none">
- <span className="text-3xl md:text-4xl font-black text-red-600 tracking-tight">Pomegranate</span>
- <span className="text-2xl md:text-3xl font-black text-red-600 tracking-tight">EV</span>
- </div>
+          <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt="Lan Chuang" className="w-full max-w-[230px] h-auto object-contain mb-6 mix-blend-multiply" />
  <h4 className="text-base font-bold text-slate-900 mb-2">Are you ready to get started?</h4>
  <p className="text-xs text-slate-500 leading-relaxed mb-6 font-medium">Contact us to tailor the most suitable product for your business.</p>
  <button onClick={() => transitionTo('contact')} className="bg-red-600 text-white px-8 py-3 font-bold text-[10px] tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.2)] hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-3 group">
@@ -309,16 +355,20 @@ export default function Home() {
  <li className="flex items-start gap-4 group">
  <svg className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors duration-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
  <span className="text-[13px] text-slate-500 leading-relaxed font-medium group-hover:text-slate-900 transition-colors duration-300">
- 3rd Floor, Building 6,<br/>No. 18 Xueqing Road,<br/>Haidian District, Beijing
+ West Zone 3-46, Hebeipu Standard Parts Industrial City,<br/>Linmingguan Town, Yongnian District,<br/>Handan, Hebei, China
  </span>
  </li>
  <li className="flex items-center gap-4 group">
  <svg className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
- <span className="text-[13px] text-slate-500 font-medium group-hover:text-slate-900 transition-colors duration-300">+86 131 2107 6570</span>
+ <span className="text-[13px] text-slate-500 font-medium group-hover:text-slate-900 transition-colors duration-300">Flynn: +86 152 3209 0227</span>
  </li>
  <li className="flex items-center gap-4 group">
  <svg className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
- <span className="text-[13px] text-slate-500 font-medium group-hover:text-slate-900 transition-colors duration-300">info@pomegranateev.com</span>
+ <span className="text-[13px] text-slate-500 font-medium group-hover:text-slate-900 transition-colors duration-300">Ava: +86 177 3100 7148</span>
+ </li>
+ <li className="flex items-center gap-4 group">
+ <svg className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+ <span className="text-[13px] text-slate-500 font-medium group-hover:text-slate-900 transition-colors duration-300">White Cheng: +86 133 3310 5125</span>
  </li>
  </ul>
  </div>
@@ -326,7 +376,7 @@ export default function Home() {
 
  {/* Copyright 底部版权条 */}
  <div className="w-full max-w-[1400px] mx-auto mt-24 pt-8 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between">
- <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">© 2026 Beijing Dahong Pomegranate Technology Co., Ltd. All Rights Reserved.</p>
+ <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">© 2026 Handan Lanchuang Fastener Manufacturing Co., Ltd. All Rights Reserved.</p>
  <div className="flex items-center gap-8 mt-4 md:mt-0">
  <span className="text-[10px] text-slate-400 font-bold hover:text-red-600 cursor-pointer uppercase tracking-widest transition-colors">Privacy Policy</span>
  <span className="text-[10px] text-slate-400 font-bold hover:text-red-600 cursor-pointer uppercase tracking-widest transition-colors">Terms of Service</span>
@@ -342,7 +392,7 @@ export default function Home() {
  {/* 顶部导航栏 - 亮色玻璃态 */}
  <nav className="fixed top-0 left-0 w-full z-[1000] flex justify-between items-center px-8 md:px-12 py-2 bg-white/80 backdrop-blur-2xl border-b border-slate-200 transition-all duration-500 shadow-sm">
  <div className="cursor-pointer -ml-4 md:-ml-6" onClick={() => transitionTo('home')}>
- <img src="/img/logo.png" alt="Company Logo" className="h-20 md:h-[100px] w-auto object-contain" />
+        <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt="Lan Chuang Fasteners" className="h-16 md:h-20 w-auto max-w-[210px] object-contain mix-blend-multiply" />
  </div>
  
  {/* 桌面端导航 */}
@@ -418,15 +468,22 @@ export default function Home() {
  <div className="scroll-content w-full relative h-max flex-none">
 
  {/* 第一屏：全屏英雄区 */}
- <div className="relative w-full h-screen overflow-hidden flex items-center flex-none">
+ <div
+ className="relative w-full h-screen overflow-hidden flex items-center flex-none bg-[#060913]"
+ onMouseEnter={() => setHeroPaused(true)}
+ onMouseLeave={() => setHeroPaused(false)}
+ >
  {/* 高清沙滩风景背景 */}
  <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
- {/* eslint-disable-next-line @next/next/no-img-element */}
- <img 
- src="/img/hero-scooters.jpg" 
- alt="Hero Banner" 
- className="w-full h-full object-cover object-center" 
+ {heroSlides.map((slide, index) => (
+ <img
+ key={slide.src}
+ src={slide.src}
+ alt={slide.alt}
+ className={`absolute inset-0 w-full h-full object-cover ${slide.position} transition-[opacity,transform] duration-[1400ms] ease-out ${activeHeroSlide === index ? 'opacity-100 scale-100' : 'opacity-0 scale-[1.04]'}`}
+ aria-hidden={activeHeroSlide !== index}
  />
+ ))}
  {/* 整体亮度遮罩层 */}
  <div className="absolute inset-0 bg-black/30"></div>
  {/* 左侧深色径向渐变，提升文字对比 */}
@@ -439,15 +496,15 @@ export default function Home() {
  <div className="flex flex-col items-start text-left w-full lg:w-[60%]">
  <div className="flex items-center gap-4 text-[10px] font-bold text-blue-300 tracking-[0.3em] uppercase mb-8">
  <div className="w-8 h-[2px] bg-blue-300"></div>
- Resort & Leisure
+ Professional Fastener Manufacturing
  </div>
  
- <h1 className="mb-8 text-blue-200 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] text-2xl md:text-3xl lg:text-[2.5rem] font-black tracking-tight whitespace-nowrap w-max max-w-none">
- Electric scooters - make travel more convenient
+ <h1 className="mb-8 text-blue-200 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] text-2xl md:text-3xl lg:text-[2.5rem] font-black tracking-tight max-w-3xl">
+ Fasteners Built for Strength. Partnerships Built to Last.
  </h1>
  
  <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-2xl mb-12 tracking-wide font-[family-name:var(--font-inter)] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
- We focus on manufacturing low-speed electric scooters to make travel more convenient and efficient, and can provide users with customized vehicle solutions for multiple scenarios and multiple needs.
+ We manufacture standard and OEM bolts, nuts, anchors, threaded rods, washers and customized metal components for global engineering and industrial customers.
  </p>
  
  <div className="flex gap-6">
@@ -473,6 +530,40 @@ export default function Home() {
  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center animate-bounce opacity-50">
  <div className="text-[9px] text-white tracking-[0.3em] uppercase mb-3">Scroll</div>
  <div className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"></div>
+ </div>
+
+ <div className="absolute right-6 md:right-12 bottom-12 md:bottom-14 z-30 flex items-center gap-4">
+ <button
+ type="button"
+ onClick={() => changeHeroSlide(-1)}
+ className="w-11 h-11 md:w-12 md:h-12 border border-white/35 bg-black/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-slate-950 transition-all duration-300"
+ aria-label="Previous hero image"
+ >
+ <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 19l-7-7 7-7" /></svg>
+ </button>
+
+ <div className="hidden sm:flex items-center gap-3 px-4 h-11 md:h-12 bg-black/20 border border-white/25 backdrop-blur-md">
+ {heroSlides.map((slide, index) => (
+ <button
+ key={slide.src}
+ type="button"
+ onClick={() => setActiveHeroSlide(index)}
+ className={`h-[2px] transition-all duration-500 ${activeHeroSlide === index ? 'w-10 bg-white' : 'w-5 bg-white/40 hover:bg-white/70'}`}
+ aria-label={`Show hero image ${index + 1}`}
+ aria-current={activeHeroSlide === index ? 'true' : undefined}
+ />
+ ))}
+ <span className="ml-1 text-[10px] font-bold tracking-[0.2em] text-white tabular-nums">0{activeHeroSlide + 1} / 0{heroSlides.length}</span>
+ </div>
+
+ <button
+ type="button"
+ onClick={() => changeHeroSlide(1)}
+ className="w-11 h-11 md:w-12 md:h-12 border border-white/35 bg-black/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-slate-950 transition-all duration-300"
+ aria-label="Next hero image"
+ >
+ <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5l7 7-7 7" /></svg>
+ </button>
  </div>
  </div>
 
@@ -533,8 +624,8 @@ export default function Home() {
  {/* 左侧：企业工厂图片 */}
  <div className="w-full lg:w-[55%] relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] group border border-white/10">
  <img 
- src="/img/canton-fair.webp" 
- alt="Factory Building" 
+ src="/img/lanchuang/factory-2.jpg"
+ alt="Handan Lanchuang production line"
  className="w-full h-auto aspect-[16/10] object-cover transform group-hover:scale-105 transition-transform duration-1000 ease-out" 
  />
  <div className="absolute inset-0 bg-gradient-to-tr from-[#0a0f1c]/50 via-transparent to-transparent group-hover:opacity-0 transition-opacity duration-700 pointer-events-none"></div>
@@ -544,15 +635,15 @@ export default function Home() {
  <div className="w-full lg:w-[45%] flex flex-col items-start relative pl-0 lg:pl-10">
  <span className="text-[10px] font-bold text-red-500 tracking-[0.4em] uppercase mb-4">Who We Are</span>
  <h3 className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
- Beijing Dahong Pomegranate<br/>Technology Co., Ltd
+ Handan Lanchuang Fastener<br/>Manufacturing Co., Ltd.
  </h3>
  
  <div className="text-slate-300 leading-relaxed text-sm md:text-base font-medium flex flex-col gap-4">
  <p>
- Located in Beijing—China's hub of technological innovation and international trade—Beijing Dahong Pomegranate Technology Co., Ltd focuses on providing global customers with safe, practical, and cost-effective short-distance green mobility solutions.
+ Located in Yongnian District, Handan City, Hebei Province, Handan Lanchuang Fastener Manufacturing Co., Ltd. is a professional manufacturer and supplier in China&apos;s largest fastener industrial cluster.
  </p>
  <p>
- Our core business centers on low-speed three-wheel and four-wheel electric vehicles, widely used for mobility assistance, short-distance commuting, and light cargo transport. Upholding the philosophy of "Quality First, Integrity-Based," we strictly control product quality and export standards. Our products have reached Southeast Asia, Africa, the Middle East, and beyond.
+ We produce a full range of standard and OEM fasteners for engineering, construction, new energy, steel structure, machinery and other industries. Complete production lines and strict quality control help us deliver reliable products, competitive prices and efficient service.
  </p>
  </div>
  </div>
@@ -569,10 +660,10 @@ export default function Home() {
 
  <div className="relative w-full max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
  {[
- { num: '30+', label: 'Countries Served' },
- { num: '10+', label: 'Years of Experience' },
- { num: '50K+', label: 'Vehicles Delivered' },
- { num: '24/7', label: 'Global Support' },
+ { num: 'GB', label: 'China Standards' },
+ { num: 'DIN', label: 'German Standards' },
+ { num: 'ANSI', label: 'American Standards' },
+ { num: 'ISO', label: 'Global Standards' },
  ].map((stat, idx) => (
  <div key={idx} className="flex flex-col items-center text-center border-r border-white/20 last:border-r-0 px-4">
  <div className="text-5xl md:text-6xl font-black text-white mb-2 tracking-tight">{stat.num}</div>
@@ -626,10 +717,10 @@ export default function Home() {
  <div className="relative w-full bg-gradient-to-b from-slate-50 to-white py-20 px-12 z-20 flex flex-col items-center">
  {/* 居中标题 */}
  <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-black font-yahei text-slate-900 text-center tracking-tighter leading-none mb-4">
- Usage scenarios
+ Industry Applications
  </h2>
  <p className="text-slate-500 text-sm md:text-base text-center max-w-2xl mb-12 font-medium">
- Explore more usage scenarios and support product customization.
+ Fastener solutions for demanding projects, with standard and customized production support.
  </p>
 
  {/* 主显示区：左侧 6 张缩略图（同一列）+ 右侧放大预览 */}
@@ -672,11 +763,11 @@ export default function Home() {
  
  {/* 左侧：联系信息与标语 */}
  <div className="w-full lg:w-[40%] flex flex-col items-start justify-center">
- <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-8 tracking-tight leading-tight whitespace-nowrap">
- Let's Start a Conversation
+ <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-8 tracking-tight leading-tight">
+ Let&apos;s Start a Conversation
  </h2>
  <p className="text-slate-600 leading-relaxed mb-12 text-sm md:text-base font-medium max-w-md">
- Whether you have a question about our electric vehicles, pricing, or customized solutions, our global team is ready to answer all your questions.
+ Tell us the product standard, size, finish, quantity or drawing requirements. Our team will help you develop the right standard or OEM fastener solution.
  </p>
 
  <div className="flex flex-col gap-8 w-full">
@@ -686,8 +777,8 @@ export default function Home() {
  <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
  </div>
  <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">Email Us</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">info@pomegranateev.com</p>
+ <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · Flynn</p>
+ <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 152 3209 0227</p>
  </div>
  </div>
  {/* Phone */}
@@ -696,8 +787,19 @@ export default function Home() {
  <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
  </div>
  <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">Call Us</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 131 2107 6570</p>
+ <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · Ava</p>
+ <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 177 3100 7148</p>
+ </div>
+ </div>
+
+ {/* WhatsApp */}
+ <div className="flex items-start gap-6 group cursor-pointer">
+ <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
+ <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+ </div>
+ <div>
+ <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · White Cheng</p>
+ <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 133 3310 5125</p>
  </div>
  </div>
  {/* Location */}
@@ -707,7 +809,7 @@ export default function Home() {
  </div>
  <div>
  <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">Headquarters</p>
- <p className="text-base font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors">3rd Floor, Building 6, No. 18 Xueqing Road,<br/>Haidian District, Beijing</p>
+ <p className="text-base font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors">West Zone 3-46, Hebeipu Standard Parts Industrial City,<br/>Yongnian District, Handan, Hebei, China</p>
  </div>
  </div>
  </div>
@@ -741,10 +843,8 @@ export default function Home() {
  <div className="relative">
  <select id="interest" defaultValue="" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all appearance-none cursor-pointer invalid:text-slate-400">
  <option value="" disabled hidden>Product of Interest</option>
- <option value="golf-cart" className="text-slate-900">Electric Golf Cart</option>
- <option value="pickup" className="text-slate-900">Electric Pickup Truck</option>
- <option value="resort" className="text-slate-900">Resort & Scenic Vehicle</option>
- <option value="other" className="text-slate-900">Other Customized Models</option>
+ {categories.map((cat) => <option key={cat} value={String(cat).toLowerCase().replaceAll(' ', '-')} className="text-slate-900">{cat}</option>)}
+ <option value="oem" className="text-slate-900">OEM / Customized Fasteners</option>
  </select>
  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -784,7 +884,7 @@ export default function Home() {
  {/* 顶部 Banner */}
  <div className="relative w-full h-[45vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-24">
  <div className="absolute inset-0 bg-black/40 z-10"></div>
- <img src="/img/banner.png" alt="Products Banner" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src="/img/lanchuang/factory-1.jpg" alt="Fastener production facility" className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-12">
  <h1 className="text-5xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  Products
@@ -804,6 +904,13 @@ export default function Home() {
  Categories
  </h3>
  <ul className="flex flex-col gap-2">
+ <li
+ onClick={() => setActiveCategory('All')}
+ className={`px-3 py-3 cursor-pointer font-bold text-[12px] transition-all duration-300 flex items-center justify-between group ${activeCategory === 'All' ? 'bg-red-600 text-white shadow-[0_8px_20px_rgba(220,38,38,0.25)]' : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}`}
+ >
+ <span>All Products</span>
+ <span className={`transform transition-transform duration-300 shrink-0 ${activeCategory === 'All' ? 'translate-x-0' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`}>&rsaquo;</span>
+ </li>
  {categories.map((cat, idx) => (
  <li 
  key={idx}
@@ -820,7 +927,7 @@ export default function Home() {
 
  {/* 右侧：产品展示网格 */}
  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 self-start">
- {filteredProducts.map((prod: any, idx: number) => (
+ {filteredProducts.map((prod, idx: number) => (
  <div 
  key={idx} 
  onClick={() => { setSelectedProduct(prod); transitionTo('product-detail'); }}
@@ -914,11 +1021,15 @@ export default function Home() {
  <ul className="flex flex-col text-[12px] text-slate-600">
  <li className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
  <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
- <span>WhatsApp: +86 131 2107 6570</span>
+ <span>Flynn: +86 152 3209 0227</span>
  </li>
  <li className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
- <span className="break-all">info@pomegranateev.com</span>
+ <span>Ava: +86 177 3100 7148</span>
+ </li>
+ <li className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
+ <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+ <span>White Cheng: +86 133 3310 5125</span>
  </li>
  </ul>
  </div>
@@ -929,7 +1040,7 @@ export default function Home() {
  <div className="bg-white border border-slate-200 p-6">
  <div className="w-full aspect-square bg-slate-50 overflow-hidden flex items-center justify-center">
  <img
- src={selectedProduct.Thumbnail || '/img/banner.png'}
+ src={selectedProduct.Thumbnail || '/img/lanchuang/factory-1.jpg'}
  alt={selectedProduct['Product Name']}
  className="w-full h-full object-contain"
  />
@@ -954,7 +1065,7 @@ export default function Home() {
  Contact Us
  </button>
  <a
- href="https://wa.me/8613121076570"
+ href="https://wa.me/8615232090227"
  target="_blank"
  rel="noopener noreferrer"
  className="flex items-center gap-2 text-red-600 font-medium text-sm hover:text-red-700 transition-colors"
@@ -1083,7 +1194,7 @@ export default function Home() {
  {/* About 顶部 Banner */}
  <div className="relative w-full h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-24">
  <div className="absolute inset-0 bg-black/50 z-10"></div>
- <img src="/img/banner.png" alt="About Us Banner" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src="/img/lanchuang/factory-1.jpg" alt="Handan Lanchuang factory" className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-12">
  <h1 className="text-5xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  About Us
@@ -1097,24 +1208,24 @@ export default function Home() {
  <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 items-center">
  {/* 左侧：企业大楼/生产基地展示 */}
  <div className="w-full lg:w-1/2 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
- <img src="/img/about.png" alt="Company HQ" className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
+ <img src="/img/lanchuang/factory-2.jpg" alt="Handan Lanchuang production equipment" className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700"></div>
  </div>
  {/* 右侧：详细介绍与数据统计 */}
  <div className="w-full lg:w-1/2 flex flex-col items-start lg:pl-8">
  <span className="text-xs font-bold text-red-600 tracking-[0.3em] uppercase mb-4"></span>
  <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 leading-tight tracking-tighter">
- Beijing Dahong Pomegranate<br/>Technology Co., Ltd
+ Handan Lanchuang Fastener<br/>Manufacturing Co., Ltd.
  </h2>
  <div className="text-slate-600 leading-relaxed mb-12 text-sm md:text-base font-medium flex flex-col gap-4">
  <p>
- Located in Beijing—China's hub of technological innovation and international trade—Beijing  Pomegranate Technology Co., Ltd. focuses on providing global customers with safe, practical, and cost-effective short-distance green mobility solutions.
+ Handan Lanchuang Fastener Manufacturing Co., Ltd. is a professional manufacturer and supplier of high-quality fasteners, located in Yongnian District, Handan City, Hebei Province, well known as China&apos;s largest fastener industrial cluster.
  </p>
  <p>
- Our core business centers on low-speed three-wheel and four-wheel electric vehicles, widely used for mobility assistance, short-distance commuting, and light cargo transport. Upholding the philosophy of "Quality First, Integrity-Based," we strictly control product quality and export standards. Our products have reached Southeast Asia, Africa, the Middle East, and beyond, earning deep trust and recognition from international clients.
+ We specialize in standard and OEM bolts, nuts, threaded rods, anchor bolts, photovoltaic fasteners, construction fasteners, mining accessories, railway fittings and customized metal components. Products are available to GB, DIN, ANSI and ISO standards with a range of surface treatments.
  </p>
  <p>
- With integrity as our cornerstone, we are committed to being a reliable partner for global clients, bringing green and convenient mobility to more countries and regions.
+ Guided by “Quality First, Credit Supreme, Long-term Cooperation,” we provide reliable products, competitive prices and efficient service for global clients, supporting both large-volume orders and customized solutions.
  </p>
  </div>
  
@@ -1133,9 +1244,9 @@ export default function Home() {
  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
  </svg>
  </div>
- <h2 className="text-2xl md:text-3xl font-black text-white mb-6 leading-tight whitespace-nowrap">Partner With Pomegranate Technology</h2>
+ <h2 className="text-2xl md:text-3xl font-black text-white mb-6 leading-tight">Partner With Lan Chuang</h2>
  <p className="text-slate-400 mb-10 text-sm md:text-base leading-relaxed max-w-md">
- Join our expanding global network. Experience unparalleled quality, service, and innovation with Technology.
+ Build a reliable long-term supply partnership with a fastener manufacturer located at the heart of China&apos;s fastener industry.
  </p>
  <button onClick={() => transitionTo('contact')} className="bg-red-600 text-white px-10 py-4 font-bold text-xs tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.3)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 group">
  GET IN TOUCH
@@ -1145,13 +1256,10 @@ export default function Home() {
 
  {/* 右侧：产品视频 */}
  <div className="w-full lg:w-1/2 max-w-[555px] mx-auto relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
- <video
- src="/img/about.mp4"
- autoPlay
- loop
- muted
- playsInline
- className="w-full h-auto object-contain"
+ <img
+ src="/img/lanchuang/factory-1.jpg"
+ alt="Lan Chuang fastener production workshop"
+ className="w-full aspect-[4/3] object-cover"
  />
  </div>
  </div>
@@ -1172,7 +1280,7 @@ export default function Home() {
  {/* Services 顶部 Banner */}
  <div className="relative w-full h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-24">
  <div className="absolute inset-0 bg-black/50 z-10"></div>
- <img src="/img/banner.png" alt="Services Banner" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src="/img/lanchuang/factory-2.jpg" alt="Fastener manufacturing services" className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-12">
  <h1 className="text-5xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  Services
@@ -1202,7 +1310,7 @@ export default function Home() {
  <p className="text-slate-600 leading-relaxed text-base mb-10 max-w-lg">
  {svc.desc}
  <br/><br/>
- We employ industry-leading standards and a highly skilled team to ensure that this aspect of our service exceeds your expectations and guarantees absolute reliability for your fleet operations.
+ Share your required standard, dimensions, material, finish, quantity or drawings, and our team will review the most suitable production solution for your order.
  </p>
  <button onClick={() => transitionTo('contact')} className="flex items-center gap-4 text-sm font-bold text-slate-900 group">
  <div className="w-12 h-12 bg-slate-100 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all duration-300 shadow-sm">
@@ -1223,31 +1331,31 @@ export default function Home() {
  
  <div className="w-full max-w-[1400px] mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-16">
  <div className="w-full md:w-1/2">
- <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">Our Commitment - Global Quality Assurance</h2>
+ <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">Our Commitment - Reliable Fastener Supply</h2>
  <p className="text-slate-400 leading-relaxed mb-10">
- Every vehicle we leave the factory undergoes strict multi-point inspection, and we have a perfect after-sales service team that can meet your various needs.
+ Every order is supported by controlled production, dimensional consistency and quality inspection, with efficient communication from quotation through delivery.
  </p>
  <div className="grid grid-cols-2 gap-8">
  <div>
- <div className="text-4xl font-black text-white mb-2">24<span className="text-red-500">/7</span></div>
- <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Global Support</div>
+ <div className="text-4xl font-black text-white mb-2">GB<span className="text-red-500"> / DIN</span></div>
+ <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Standard Production</div>
  </div>
  <div>
- <div className="text-4xl font-black text-white mb-2">3<span className="text-red-500">Y</span></div>
- <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Core Warranty</div>
+ <div className="text-4xl font-black text-white mb-2">ANSI<span className="text-red-500"> / ISO</span></div>
+ <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">International Supply</div>
  </div>
  </div>
  </div>
  <div className="w-full md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-6">
  <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 hover:bg-white/10 transition-colors">
  <svg className="w-8 h-8 text-red-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
- <h4 className="text-white font-bold mb-2">Genuine Parts</h4>
- <p className="text-slate-400 text-sm">100% original manufacturer parts guaranteed.</p>
+ <h4 className="text-white font-bold mb-2">Quality Control</h4>
+ <p className="text-slate-400 text-sm">Consistent dimensions and stable batch performance.</p>
  </div>
  <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 hover:bg-white/10 transition-colors sm:mt-8">
  <svg className="w-8 h-8 text-red-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
- <h4 className="text-white font-bold mb-2">Maintenance</h4>
- <p className="text-slate-400 text-sm">Scheduled service plans available globally.</p>
+ <h4 className="text-white font-bold mb-2">OEM Capability</h4>
+ <p className="text-slate-400 text-sm">Customized metal components made to project needs.</p>
  </div>
  </div>
  </div>
@@ -1268,7 +1376,7 @@ export default function Home() {
  {/* Contact 顶部 Banner */}
  <div className="relative w-full h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-24">
  <div className="absolute inset-0 bg-black/60 z-10"></div>
- <img src="/img/canton-fair.png" alt="Contact Banner" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src="/img/lanchuang/factory-2.jpg" alt="Contact Handan Lanchuang" className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-12">
  <h1 className="text-5xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  Contact Us
@@ -1283,11 +1391,11 @@ export default function Home() {
  
  {/* 左侧：联系信息与标语 */}
  <div className="w-full lg:w-[40%] flex flex-col items-start justify-center">
- <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-8 tracking-tight leading-tight whitespace-nowrap">
- Let's Start a Conversation
+ <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-8 tracking-tight leading-tight">
+ Let&apos;s Start a Conversation
  </h2>
  <p className="text-slate-600 leading-relaxed mb-12 text-sm md:text-base font-medium max-w-md">
- Whether you have a question about our electric vehicles, pricing, or customized solutions, our global team is ready to answer all your questions.
+ Tell us the product standard, size, finish, quantity or drawing requirements. Our team will help you develop the right standard or OEM fastener solution.
  </p>
 
  <div className="flex flex-col gap-8 w-full">
@@ -1297,8 +1405,8 @@ export default function Home() {
  <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
  </div>
  <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">Email Us</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">info@pomegranateev.com</p>
+ <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · Flynn</p>
+ <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 152 3209 0227</p>
  </div>
  </div>
  {/* Phone */}
@@ -1307,8 +1415,18 @@ export default function Home() {
  <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
  </div>
  <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">Call Us</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 131 2107 6570</p>
+ <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · Ava</p>
+ <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 177 3100 7148</p>
+ </div>
+ </div>
+ {/* WhatsApp */}
+ <div className="flex items-start gap-6 group cursor-pointer">
+ <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
+ <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+ </div>
+ <div>
+ <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · White Cheng</p>
+ <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 133 3310 5125</p>
  </div>
  </div>
  {/* Location */}
@@ -1318,7 +1436,7 @@ export default function Home() {
  </div>
  <div>
  <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">Headquarters</p>
- <p className="text-base font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors">3rd Floor, Building 6, No. 18 Xueqing Road,<br/>Haidian District, Beijing</p>
+ <p className="text-base font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors">West Zone 3-46, Hebeipu Standard Parts Industrial City,<br/>Yongnian District, Handan, Hebei, China</p>
  </div>
  </div>
  </div>
@@ -1364,10 +1482,8 @@ export default function Home() {
  <div className="relative">
  <select id="contact-interest" defaultValue="" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all appearance-none cursor-pointer invalid:text-slate-400">
  <option value="" disabled hidden>Product of Interest</option>
- <option value="golf-cart" className="text-slate-900">Electric Golf Cart</option>
- <option value="pickup" className="text-slate-900">Electric Pickup Truck</option>
- <option value="resort" className="text-slate-900">Resort & Scenic Vehicle</option>
- <option value="other" className="text-slate-900">Other Customized Models</option>
+ {categories.map((cat) => <option key={cat} value={String(cat).toLowerCase().replaceAll(' ', '-')} className="text-slate-900">{cat}</option>)}
+ <option value="oem" className="text-slate-900">OEM / Customized Fasteners</option>
  </select>
  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>

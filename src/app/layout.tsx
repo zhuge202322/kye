@@ -16,8 +16,8 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Pomegranate EV",
-  description: "Beijing Dahong Pomegranate Technology Co., Ltd — Electric scooters & low-speed green mobility solutions for global customers.",
+  title: "Lan Chuang Fasteners | Handan Lanchuang Fastener Manufacturing Co., Ltd.",
+  description: "Standard and OEM bolts, nuts, anchors, threaded rods, washers and customized fastener solutions from Handan, China.",
 };
 
 export default function RootLayout({
