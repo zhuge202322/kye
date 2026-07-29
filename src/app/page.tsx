@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import gsap from 'gsap';
 import Lenis from 'lenis';
+import { isLocale, isRtlLocale, localeOptions, translate, translateProductHtml, type Locale } from './i18n';
 import productsData from './products_data.json';
 
 type Product = {
@@ -34,6 +35,173 @@ const categoryCards = categories.map((cat) => ({
  name: cat,
  image: products.find((product) => product.Category === cat)?.Thumbnail || '/img/lanchuang/factory-1.jpg',
 }));
+
+const whatsappContacts = [
+ { name: 'White Cheng', displayNumber: '+86 133 3310 5125', whatsappNumber: '8613333105125' },
+ { name: 'Ava', displayNumber: '+86 177 3100 7148', whatsappNumber: '8617731007148' },
+ { name: 'Flynn', displayNumber: '+86 152 3209 0227', whatsappNumber: '8615232090227' },
+];
+
+const contactEmail = 'info@handanbolt.com';
+
+const socialLinks = [
+ { id: 'facebook', label: 'Facebook', href: '' },
+ { id: 'instagram', label: 'Instagram', href: '' },
+ { id: 'tiktok', label: 'TikTok', href: '' },
+ { id: 'youtube', label: 'YouTube', href: '' },
+ { id: 'linkedin', label: 'LinkedIn', href: '' },
+] as const;
+
+function SocialIcon({ id }: { id: (typeof socialLinks)[number]['id'] }) {
+ const paths = {
+ facebook: 'M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.438H7.078v-3.489h3.047V9.413c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.974h-1.513c-1.491 0-1.956.931-1.956 1.887v2.26h3.328l-.532 3.489h-2.796V24C19.612 23.094 24 18.1 24 12.073z',
+ instagram: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z',
+ tiktok: 'M19.589 6.686a4.793 4.793 0 01-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 01-5.201 1.743 2.895 2.895 0 015.201-1.743V12.18a6.329 6.329 0 00-5.394 10.692A6.33 6.33 0 0015.82 18.2V9.243a8.16 8.16 0 004.773 1.526V7.343a4.85 4.85 0 01-1.005-.657z',
+ youtube: 'M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z',
+ linkedin: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.047c.475-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286h-.002zM5.337 7.433a2.063 2.063 0 110-4.126 2.063 2.063 0 010 4.126zM3.559 20.452h3.557V9H3.559v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z',
+ } as const;
+
+ if (id === 'instagram') {
+ return (
+ <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+ <defs>
+ <linearGradient id="instagram-brand-gradient" x1="3" y1="21" x2="21" y2="3" gradientUnits="userSpaceOnUse">
+ <stop offset="0" stopColor="#FFD600" />
+ <stop offset="0.38" stopColor="#FF7A00" />
+ <stop offset="0.68" stopColor="#FF0169" />
+ <stop offset="1" stopColor="#D300C5" />
+ </linearGradient>
+ </defs>
+ <path d={paths.instagram} fill="url(#instagram-brand-gradient)" />
+ </svg>
+ );
+ }
+
+ if (id === 'tiktok') {
+ return (
+ <svg className="h-4 w-4" viewBox="-1 -1 26 26" aria-hidden="true">
+ <path d={paths.tiktok} fill="#25F4EE" transform="translate(-0.6 0.4)" />
+ <path d={paths.tiktok} fill="#FE2C55" transform="translate(0.6 -0.4)" />
+ <path d={paths.tiktok} fill="#111111" />
+ </svg>
+ );
+ }
+
+ const brandColors = {
+ facebook: '#1877F2',
+ youtube: '#FF0000',
+ linkedin: '#0A66C2',
+ } as const;
+
+ return (
+ <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+ <path d={paths[id]} fill={brandColors[id]} />
+ </svg>
+ );
+}
+
+function WhatsAppIcon({ className = 'w-5 h-5' }: { className?: string }) {
+ return (
+ <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+ <path d="M12.04 2A9.84 9.84 0 003.6 16.91L2 22l5.23-1.54A9.84 9.84 0 1012.04 2zm0 17.93a8.03 8.03 0 01-4.1-1.12l-.29-.17-3.1.91.94-3.02-.19-.31a8.08 8.08 0 116.74 3.71zm4.43-6.04c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.19-.72-.64-1.2-1.43-1.34-1.68-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.31-.75-1.8-.19-.47-.39-.41-.54-.42h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.33.98 2.49c.12.16 1.7 2.59 4.11 3.64.57.25 1.02.4 1.37.51.58.18 1.1.16 1.52.1.46-.07 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z" />
+ </svg>
+ );
+}
+
+function EmailIcon({ className = 'w-5 h-5' }: { className?: string }) {
+ return (
+ <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+ <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+ </svg>
+ );
+}
+
+function LanguageSwitcher({ locale, onChange }: { locale: Locale; onChange: (locale: Locale) => void }) {
+ const activeOption = localeOptions.find((option) => option.code === locale) ?? localeOptions[0];
+
+ return (
+ <label className="relative flex h-11 w-[76px] shrink-0 cursor-pointer items-center justify-center gap-2 border border-slate-200 bg-white text-slate-700 transition-colors hover:border-red-500 hover:text-red-600 md:h-10 md:w-[82px]" title={translate(locale, 'Language')}>
+ <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+ <circle cx="12" cy="12" r="9" strokeWidth="1.7" />
+ <path strokeLinecap="round" strokeWidth="1.7" d="M3.5 12h17M12 3c2.4 2.45 3.6 5.45 3.6 9S14.4 18.55 12 21M12 3C9.6 5.45 8.4 8.45 8.4 12s1.2 6.55 3.6 9" />
+ </svg>
+ <span className="text-[11px] font-black tracking-wider">{activeOption.shortLabel}</span>
+ <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+ <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 9l6 6 6-6" />
+ </svg>
+ <select
+ value={locale}
+ onChange={(event) => onChange(event.target.value as Locale)}
+ className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+ aria-label={translate(locale, 'Language')}
+ >
+ {localeOptions.map((option) => (
+ <option key={option.code} value={option.code}>{option.label}</option>
+ ))}
+ </select>
+ </label>
+ );
+}
+
+function ContactMethods({ locale }: { locale: Locale }) {
+ return (
+ <>
+ {whatsappContacts.map((contact) => (
+ <a
+ key={contact.whatsappNumber}
+ href={`https://wa.me/${contact.whatsappNumber}`}
+ target="_blank"
+ rel="noopener noreferrer"
+ className="flex items-start gap-6 group"
+ aria-label={`${translate(locale, 'Chat with')} ${contact.name} ${translate(locale, 'on WhatsApp at')} ${contact.displayNumber}`}
+ >
+ <span className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center text-[#128c4a] group-hover:bg-[#25D366] group-hover:border-[#25D366] group-hover:text-white transition-colors duration-300 shrink-0 shadow-sm">
+ <WhatsAppIcon />
+ </span>
+ <span>
+ <span className="block text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1 group-hover:text-[#128c4a] transition-colors">WhatsApp · {contact.name}</span>
+ <span className="block text-lg font-bold text-slate-900 group-hover:text-[#128c4a] transition-colors">{contact.displayNumber}</span>
+ </span>
+ </a>
+ ))}
+ <a href={`mailto:${contactEmail}`} className="flex items-start gap-6 group" aria-label={`Email ${contactEmail}`}>
+ <span className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-600 group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white transition-colors duration-300 shrink-0 shadow-sm">
+ <EmailIcon />
+ </span>
+ <span>
+ <span className="block text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1 group-hover:text-red-600 transition-colors">{translate(locale, 'Email')}</span>
+ <span className="block text-base sm:text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors break-all">{contactEmail}</span>
+ </span>
+ </a>
+ </>
+ );
+}
+
+function WhatsAppFloatingButtons({ locale }: { locale: Locale }) {
+ return (
+ <aside className="fixed right-3 bottom-3 md:right-6 md:bottom-6 z-[1200] flex flex-col items-end gap-2" aria-label={translate(locale, 'WhatsApp customer service')}>
+ {whatsappContacts.map((contact) => (
+ <a
+ key={contact.whatsappNumber}
+ href={`https://wa.me/${contact.whatsappNumber}`}
+ target="_blank"
+ rel="noopener noreferrer"
+ title={`WhatsApp · ${contact.name} · ${contact.displayNumber}`}
+ aria-label={`${translate(locale, 'Chat with')} ${contact.name} ${translate(locale, 'on WhatsApp at')} ${contact.displayNumber}`}
+ className="group flex h-12 w-12 md:h-14 md:w-[230px] items-center overflow-hidden border border-slate-200 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.16)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#25D366] hover:shadow-[0_12px_30px_rgba(18,140,74,0.22)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/30"
+ >
+ <span className="flex h-full w-full md:w-14 shrink-0 items-center justify-center bg-[#25D366] text-white">
+ <WhatsAppIcon className="w-6 h-6" />
+ </span>
+ <span className="hidden min-w-0 px-3 text-left md:block">
+ <span className="block truncate text-[9px] font-bold uppercase tracking-[0.14em] text-[#128c4a]">WhatsApp · {contact.name}</span>
+ <span className="mt-0.5 block whitespace-nowrap text-[12px] font-black text-slate-900">{contact.displayNumber}</span>
+ </span>
+ </a>
+ ))}
+ </aside>
+ );
+}
 
 // 服务支持区数据 (首页与服务页共用)
 const servicesData: Service[] = [
@@ -143,6 +311,7 @@ const heroSlides = [
 ];
 
 export default function Home() {
+ const [locale, setLocale] = useState<Locale>('en');
  const [currentId, setCurrentId] = useState('home');
  const [activeScenario, setActiveScenario] = useState(0);
  const [activeCategory, setActiveCategory] = useState('All');
@@ -156,6 +325,22 @@ export default function Home() {
  const lenisRef = useRef<Lenis | null>(null);
  const detailContentRef = useRef<HTMLDivElement>(null);
  const transitionToRef = useRef<((id: string, skip?: boolean) => void) | null>(null);
+ const localeInitializedRef = useRef(false);
+ const t = useCallback((source: string) => translate(locale, source), [locale]);
+
+ useEffect(() => {
+ let nextLocale = locale;
+ if (!localeInitializedRef.current) {
+ localeInitializedRef.current = true;
+ const savedLocale = window.localStorage.getItem('lanchuang-locale');
+ if (isLocale(savedLocale)) nextLocale = savedLocale;
+ }
+
+ document.documentElement.lang = nextLocale;
+ document.documentElement.dir = isRtlLocale(nextLocale) ? 'rtl' : 'ltr';
+ window.localStorage.setItem('lanchuang-locale', nextLocale);
+ if (nextLocale !== locale) setLocale(nextLocale);
+ }, [locale]);
 
  const filteredProducts = activeCategory === 'All' 
  ? products
@@ -315,23 +500,52 @@ export default function Home() {
  
  {/* 列 1: 品牌与引导 */}
  <div className="w-full flex flex-col items-start">
-          <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt="Lan Chuang" className="w-full max-w-[190px] md:max-w-[230px] h-auto object-contain mb-6 mix-blend-multiply" />
- <h4 className="text-base font-bold text-slate-900 mb-2">Are you ready to get started?</h4>
- <p className="text-xs text-slate-500 leading-relaxed mb-6 font-medium">Contact us to tailor the most suitable product for your business.</p>
+          <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt={t("Lan Chuang")} className="w-full max-w-[190px] md:max-w-[230px] h-auto object-contain mb-6 mix-blend-multiply" />
+ <h4 className="text-base font-bold text-slate-900 mb-2">{t("Are you ready to get started?")}</h4>
+ <p className="text-xs text-slate-500 leading-relaxed mb-6 font-medium">{t("Contact us to tailor the most suitable product for your business.")}</p>
  <button onClick={() => transitionTo('contact')} className="bg-red-600 text-white px-8 py-3 font-bold text-[10px] tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.2)] hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-3 group">
- CONTACT US
+ {t("CONTACT US")}
  <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
  </button>
+ <div className="mt-7">
+ <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">{t("Follow Us")}</p>
+ <div className="flex flex-wrap items-center gap-2" aria-label={t("Social media")}>
+ {socialLinks.map((social) => social.href ? (
+ <a
+ key={social.id}
+ href={social.href}
+ target="_blank"
+ rel="noopener noreferrer"
+ aria-label={social.label}
+ title={social.label}
+ className="flex h-9 w-9 items-center justify-center border border-slate-200 bg-white text-slate-500 transition-all duration-300 hover:-translate-y-0.5 hover:border-red-600 hover:bg-red-600 hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-red-600/20"
+ >
+ <SocialIcon id={social.id} />
+ </a>
+ ) : (
+ <button
+ key={social.id}
+ type="button"
+ disabled
+ aria-label={`${social.label} ${t('link coming soon')}`}
+ title={`${social.label} ${t('link coming soon')}`}
+ className="flex h-9 w-9 cursor-default items-center justify-center border border-slate-200 bg-white text-slate-400"
+ >
+ <SocialIcon id={social.id} />
+ </button>
+ ))}
+ </div>
+ </div>
  </div>
 
  {/* 列 2: Products 菜单 */}
  <div className="w-full flex flex-col items-start lg:pl-10">
- <h4 className="text-sm font-black text-slate-900 tracking-widest uppercase mb-8">PRODUCTS</h4>
+ <h4 className="text-sm font-black text-slate-900 tracking-widest uppercase mb-8">{t("PRODUCTS")}</h4>
  <ul className="flex flex-col gap-4">
  {categories.map((cat, i) => (
  <li key={i} className="flex items-center gap-3 group cursor-pointer" onClick={() => { setActiveCategory(cat as string); transitionTo('products'); }}>
  <span className="text-red-600 font-black text-sm transform group-hover:translate-x-1 transition-transform duration-300">&rsaquo;</span>
- <span className="text-[13px] text-slate-500 font-medium group-hover:text-red-600 transition-colors duration-300 capitalize">{cat as string}</span>
+ <span className="text-[13px] text-slate-500 font-medium group-hover:text-red-600 transition-colors duration-300 capitalize">{t(cat as string)}</span>
  </li>
  ))}
  </ul>
@@ -339,7 +553,7 @@ export default function Home() {
 
  {/* 列 3: Information 菜单 */}
  <div className="w-full flex flex-col items-start">
- <h4 className="text-sm font-black text-slate-900 tracking-widest uppercase mb-8">INFORMATION</h4>
+ <h4 className="text-sm font-black text-slate-900 tracking-widest uppercase mb-8">{t("INFORMATION")}</h4>
  <ul className="flex flex-col gap-4">
  {[
  { label: 'About Us', target: 'about' },
@@ -348,7 +562,7 @@ export default function Home() {
  ].map((item, i) => (
  <li key={i} className="flex items-center gap-3 group cursor-pointer" onClick={() => transitionTo(item.target)}>
  <span className="text-red-600 font-black text-sm transform group-hover:translate-x-1 transition-transform duration-300">&rsaquo;</span>
- <span className="text-[13px] text-slate-500 font-medium group-hover:text-red-600 transition-colors duration-300">{item.label}</span>
+ <span className="text-[13px] text-slate-500 font-medium group-hover:text-red-600 transition-colors duration-300">{t(item.label)}</span>
  </li>
  ))}
  </ul>
@@ -356,25 +570,29 @@ export default function Home() {
 
  {/* 列 4: Contact Us 联系信息 */}
  <div className="w-full flex flex-col items-start">
- <h4 className="text-sm font-black text-slate-900 tracking-widest uppercase mb-8">CONTACT US</h4>
+ <h4 className="text-sm font-black text-slate-900 tracking-widest uppercase mb-8">{t("CONTACT US")}</h4>
  <ul className="flex flex-col gap-6">
  <li className="flex items-start gap-4 group">
  <svg className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors duration-300 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
  <span className="text-[13px] text-slate-500 leading-relaxed font-medium group-hover:text-slate-900 transition-colors duration-300">
- West Zone 3-46, Hebeipu Standard Parts Industrial City,<br/>Linmingguan Town, Yongnian District,<br/>Handan, Hebei, China
+ {t("West Zone 3-46, Hebeipu Standard Parts Industrial City,")}<br/>{t("Linmingguan Town, Yongnian District,")}<br/>{t("Handan, Hebei, China")}
  </span>
  </li>
  <li className="flex items-center gap-4 group">
- <svg className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
- <span className="text-[13px] text-slate-500 font-medium group-hover:text-slate-900 transition-colors duration-300">White Cheng: +86 133 3310 5125</span>
+ <WhatsAppIcon className="w-5 h-5 text-[#128c4a] shrink-0" />
+ <a href="https://wa.me/8613333105125" target="_blank" rel="noopener noreferrer" className="text-[13px] text-slate-500 font-medium group-hover:text-[#128c4a] transition-colors duration-300" aria-label={t("Chat with White Cheng on WhatsApp")}>{t("White Cheng: +86 133 3310 5125")}</a>
  </li>
  <li className="flex items-center gap-4 group">
- <svg className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
- <span className="text-[13px] text-slate-500 font-medium group-hover:text-slate-900 transition-colors duration-300">Ava: +86 177 3100 7148</span>
+ <WhatsAppIcon className="w-5 h-5 text-[#128c4a] shrink-0" />
+ <a href="https://wa.me/8617731007148" target="_blank" rel="noopener noreferrer" className="text-[13px] text-slate-500 font-medium group-hover:text-[#128c4a] transition-colors duration-300" aria-label={t("Chat with Ava on WhatsApp")}>{t("Ava: +86 177 3100 7148")}</a>
  </li>
  <li className="flex items-center gap-4 group">
- <svg className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors duration-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
- <span className="text-[13px] text-slate-500 font-medium group-hover:text-slate-900 transition-colors duration-300">Flynn: +86 152 3209 0227</span>
+ <WhatsAppIcon className="w-5 h-5 text-[#128c4a] shrink-0" />
+ <a href="https://wa.me/8615232090227" target="_blank" rel="noopener noreferrer" className="text-[13px] text-slate-500 font-medium group-hover:text-[#128c4a] transition-colors duration-300" aria-label={t("Chat with Flynn on WhatsApp")}>{t("Flynn: +86 152 3209 0227")}</a>
+ </li>
+ <li className="flex items-center gap-4 group">
+ <EmailIcon className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors shrink-0" />
+ <a href={`mailto:${contactEmail}`} className="text-[13px] text-slate-500 font-medium group-hover:text-red-600 transition-colors duration-300 break-all">{contactEmail}</a>
  </li>
  </ul>
  </div>
@@ -382,10 +600,10 @@ export default function Home() {
 
  {/* Copyright 底部版权条 */}
  <div className="w-full max-w-[1400px] mx-auto mt-12 md:mt-24 pt-8 border-t border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 md:gap-0">
- <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">© 2026 Handan Lanchuang Fastener Manufacturing Co., Ltd. All Rights Reserved.</p>
+ <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">{t("© 2026 Handan Lanchuang Fastener Manufacturing Co., Ltd. All Rights Reserved.")}</p>
  <div className="flex flex-wrap items-center gap-5 md:gap-8">
- <span className="text-[10px] text-slate-400 font-bold hover:text-red-600 cursor-pointer uppercase tracking-widest transition-colors">Privacy Policy</span>
- <span className="text-[10px] text-slate-400 font-bold hover:text-red-600 cursor-pointer uppercase tracking-widest transition-colors">Terms of Service</span>
+ <span className="text-[10px] text-slate-400 font-bold hover:text-red-600 cursor-pointer uppercase tracking-widest transition-colors">{t("Privacy Policy")}</span>
+ <span className="text-[10px] text-slate-400 font-bold hover:text-red-600 cursor-pointer uppercase tracking-widest transition-colors">{t("Terms of Service")}</span>
  </div>
  </div>
  </footer>
@@ -394,29 +612,30 @@ export default function Home() {
  return (
  <>
  <div className="motion-overlay" id="blur-layer"></div>
+ <WhatsAppFloatingButtons locale={locale} />
 
  {/* 顶部导航栏 - 亮色玻璃态 */}
- <nav className="fixed top-0 left-0 w-full h-[72px] md:h-auto z-[1000] flex justify-between items-center px-5 md:px-12 py-0 md:py-2 bg-white/90 backdrop-blur-2xl border-b border-slate-200 transition-all duration-500 shadow-sm">
+ <nav dir="ltr" className="fixed top-0 left-0 w-full h-[72px] md:h-auto z-[1000] flex justify-between items-center gap-3 px-5 md:px-12 py-0 md:py-2 bg-white/90 backdrop-blur-2xl border-b border-slate-200 transition-all duration-500 shadow-sm">
  <div className="cursor-pointer -ml-2 md:-ml-6" onClick={() => transitionTo('home')}>
-        <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt="Lan Chuang Fasteners" className="h-12 md:h-20 w-auto max-w-[170px] md:max-w-[210px] object-contain mix-blend-multiply" />
+        <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt={t("Lan Chuang Fasteners")} className="h-12 md:h-20 w-auto max-w-[170px] md:max-w-[210px] object-contain mix-blend-multiply" />
  </div>
  
  {/* 桌面端导航 */}
- <ul className="hidden lg:flex items-center gap-10">
+ <ul className="hidden lg:flex items-center gap-5 xl:gap-10">
  {navItems.map((item) => (
  <li 
  key={item.id}
- className={`relative group cursor-pointer text-xs font-bold uppercase tracking-[0.15em] transition-colors duration-300 ${currentId === item.id ? 'text-slate-900' : 'text-slate-400 hover:text-slate-900'}`}
+ className={`relative group cursor-pointer text-[10px] xl:text-xs font-bold uppercase tracking-[0.08em] xl:tracking-[0.15em] transition-colors duration-300 ${currentId === item.id ? 'text-slate-900' : 'text-slate-400 hover:text-slate-900'}`}
  >
  <div onClick={() => transitionTo(item.id)} className="py-2">
- {item.label}
+ {t(item.label)}
  </div>
  
  {/* 超级菜单 (Mega Menu) */}
  {item.hasMegaMenu && (
  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-6 opacity-0 translate-y-4 invisible group-hover:opacity-100 group-hover:translate-y-0 group-hover:visible transition-all duration-500 ease-out">
  <div className="bg-white/95 backdrop-blur-2xl border border-slate-100 shadow-[0_40px_100px_rgba(0,0,0,0.1)] p-8 w-[600px]">
- <div className="text-[10px] text-slate-400 mb-6 border-b border-slate-100 pb-4 tracking-widest font-bold">EXPLORE OUR CATEGORIES</div>
+ <div className="text-[10px] text-slate-400 mb-6 border-b border-slate-100 pb-4 tracking-widest font-bold">{t("EXPLORE OUR CATEGORIES")}</div>
  <div className="grid grid-cols-2 gap-x-8 gap-y-5">
  {categories.map((cat, idx) => (
  <div 
@@ -424,7 +643,7 @@ export default function Home() {
  className="text-sm text-slate-600 hover:text-red-600 hover:translate-x-1 transition-all duration-300 cursor-pointer capitalize font-semibold tracking-normal"
  onClick={() => { setActiveCategory(cat as string); transitionTo('products'); }}
  >
- {cat as string}
+ {t(cat as string)}
  </div>
  ))}
  </div>
@@ -439,10 +658,12 @@ export default function Home() {
  </ul>
 
  {/* 移动端汉堡菜单按钮 */}
+ <div className="flex items-center gap-2">
+ <LanguageSwitcher locale={locale} onChange={(nextLocale) => { setLocale(nextLocale); setMobileMenuOpen(false); }} />
  <button
  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
  className="lg:hidden flex flex-col justify-center items-center w-11 h-11 gap-[5px] focus:outline-none"
- aria-label="Toggle menu"
+ aria-label={t("Toggle menu")}
  >
  <span className={`w-6 h-[2px] bg-slate-900 transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-[7px]' : ''}`}></span>
  <span className={`w-6 h-[2px] bg-slate-900 transition-all duration-300 ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
@@ -450,6 +671,7 @@ export default function Home() {
  </button>
 
  {/* 移动端展开菜单面板 */}
+ </div>
  <div className={`lg:hidden fixed top-[72px] md:top-[96px] left-0 w-full bg-white border-b border-slate-200 shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 origin-top ${mobileMenuOpen ? 'opacity-100 visible scale-y-100' : 'opacity-0 invisible scale-y-0'}`}>
  <ul className="flex flex-col py-4">
  {navItems.map((item) => (
@@ -458,14 +680,14 @@ export default function Home() {
  onClick={() => { transitionTo(item.id); setMobileMenuOpen(false); }}
  className={`px-6 py-3.5 text-sm font-bold uppercase tracking-[0.15em] cursor-pointer border-l-4 transition-all duration-300 ${currentId === item.id ? 'text-red-600 border-red-600 bg-red-50' : 'text-slate-700 border-transparent hover:bg-slate-50 hover:text-red-600'}`}
  >
- {item.label}
+ {t(item.label)}
  </li>
  ))}
  </ul>
  </div>
  </nav>
 
- <div className="viewport">
+ <div className="viewport" dir={isRtlLocale(locale) ? 'rtl' : 'ltr'}>
  <div className="stage" ref={stageRef} id="main-stage">
  
  {/* 页面 01: Home (全屏英雄区 + Product Series) */}
@@ -485,7 +707,7 @@ export default function Home() {
  <img
  key={slide.src}
  src={slide.src}
- alt={slide.alt}
+ alt={t(slide.alt)}
  className={`absolute inset-0 w-full h-full object-cover ${slide.position} transition-[opacity,transform] duration-[1400ms] ease-out ${activeHeroSlide === index ? 'opacity-100 scale-100' : 'opacity-0 scale-[1.04]'}`}
  aria-hidden={activeHeroSlide !== index}
  />
@@ -502,15 +724,15 @@ export default function Home() {
  <div className="flex flex-col items-start text-left w-full lg:w-[60%]">
  <div className="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-bold text-blue-300 tracking-[0.2em] md:tracking-[0.3em] uppercase mb-5 md:mb-8 leading-relaxed">
  <div className="w-6 md:w-8 h-[2px] bg-blue-300 shrink-0"></div>
- Professional Fastener Manufacturing
+ {t("Professional Fastener Manufacturing")}
  </div>
  
  <h1 className="mb-5 md:mb-8 text-blue-200 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] text-[1.65rem] md:text-3xl lg:text-[2.5rem] leading-[1.2] font-black tracking-tight max-w-3xl">
- Fasteners Built for Strength. Partnerships Built to Last.
+ {t("Fasteners Built for Strength. Partnerships Built to Last.")}
  </h1>
  
  <p className="text-blue-100 text-sm md:text-base leading-7 md:leading-relaxed max-w-2xl mb-7 md:mb-12 tracking-normal md:tracking-wide font-[family-name:var(--font-inter)] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
- We manufacture standard and OEM bolts, nuts, anchors, threaded rods, washers and customized metal components for global engineering and industrial customers.
+ {t("We manufacture standard and OEM bolts, nuts, anchors, threaded rods, washers and customized metal components for global engineering and industrial customers.")}
  </p>
  
  <div className="flex flex-col sm:flex-row gap-3 md:gap-6 w-full sm:w-auto max-w-[360px] sm:max-w-none">
@@ -518,13 +740,13 @@ export default function Home() {
  onClick={() => transitionTo('products')}
  className="w-full sm:w-auto min-h-13 px-6 md:px-10 py-3.5 md:py-4 bg-white text-black text-[11px] md:text-xs font-bold tracking-[0.14em] md:tracking-[0.2em] whitespace-nowrap uppercase hover:bg-blue-50 hover:scale-105 hover:shadow-[0_10px_30px_rgba(255,255,255,0.3)] transition-all duration-500 ease-out"
  >
- Explore Our Products
+ {t("Explore Our Products")}
  </button>
  <button 
  onClick={() => transitionTo('about')}
  className="w-full sm:w-auto min-h-13 px-6 md:px-10 py-3.5 md:py-4 bg-black/20 backdrop-blur-md text-white border border-white/30 text-[11px] md:text-xs font-bold tracking-[0.14em] md:tracking-[0.2em] whitespace-nowrap uppercase hover:border-white hover:bg-white/10 transition-all duration-500 ease-out"
  >
- Our Expertise
+ {t("Our Expertise")}
  </button>
  </div>
  </div>
@@ -534,7 +756,7 @@ export default function Home() {
  
  {/* 向下滚动提示 */}
  <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden md:flex flex-col items-center animate-bounce opacity-50">
- <div className="text-[9px] text-white tracking-[0.3em] uppercase mb-3">Scroll</div>
+ <div className="text-[9px] text-white tracking-[0.3em] uppercase mb-3">{t("Scroll")}</div>
  <div className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"></div>
  </div>
 
@@ -543,7 +765,7 @@ export default function Home() {
  type="button"
  onClick={() => changeHeroSlide(-1)}
  className="w-11 h-11 md:w-12 md:h-12 border border-white/35 bg-black/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-slate-950 transition-all duration-300"
- aria-label="Previous hero image"
+ aria-label={t("Previous hero image")}
  >
  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 19l-7-7 7-7" /></svg>
  </button>
@@ -555,7 +777,7 @@ export default function Home() {
  type="button"
  onClick={() => setActiveHeroSlide(index)}
  className={`h-[2px] transition-all duration-500 ${activeHeroSlide === index ? 'w-10 bg-white' : 'w-5 bg-white/40 hover:bg-white/70'}`}
- aria-label={`Show hero image ${index + 1}`}
+ aria-label={`${t('Show hero image')} ${index + 1}`}
  aria-current={activeHeroSlide === index ? 'true' : undefined}
  />
  ))}
@@ -566,7 +788,7 @@ export default function Home() {
  type="button"
  onClick={() => changeHeroSlide(1)}
  className="w-11 h-11 md:w-12 md:h-12 border border-white/35 bg-black/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-slate-950 transition-all duration-300"
- aria-label="Next hero image"
+ aria-label={t("Next hero image")}
  >
  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 5l7 7-7 7" /></svg>
  </button>
@@ -576,7 +798,7 @@ export default function Home() {
  {/* 第二屏：Product Series 分类展示区 (Light Theme) */}
  <div className="relative w-full bg-gradient-to-b from-slate-50 to-white pt-12 pb-16 px-6 md:px-12 z-20 flex flex-col items-center">
  <h2 className="text-3xl md:text-[clamp(2.5rem,5vw,4rem)] font-black font-yahei text-slate-900 mb-8 md:mb-10 text-center tracking-tighter leading-none">
- Products
+ {t("Products")}
  </h2>
  
  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 lg:gap-8 w-full max-w-[1200px]">
@@ -590,7 +812,7 @@ export default function Home() {
  {/* 背景图：产品品类代表图，悬停时完全清晰 */}
  <img 
  src={cat.image} 
- alt={cat.name} 
+ alt={t(cat.name)}
  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out opacity-80 group-hover:opacity-100"
  />
  {/* 黑色底部渐变遮罩，保证文字清晰 (即使在白底主题下，图片上的文字通常也需要暗色遮罩) */}
@@ -599,9 +821,9 @@ export default function Home() {
  {/* 文字内容 */}
  <div className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8 flex justify-between items-end gap-2 pointer-events-none">
  <div>
- <div className="text-[8px] md:text-[9px] text-red-400 tracking-[0.15em] md:tracking-[0.2em] uppercase mb-2 md:mb-3">Series {(idx + 1).toString().padStart(2, '0')}</div>
+ <div className="text-[8px] md:text-[9px] text-red-400 tracking-[0.15em] md:tracking-[0.2em] uppercase mb-2 md:mb-3">{t("Series")} {(idx + 1).toString().padStart(2, '0')}</div>
  <h3 className="text-sm sm:text-base md:text-xl font-bold text-white tracking-normal md:tracking-wide capitalize group-hover:text-red-50 transition-colors duration-500 leading-tight">
- {cat.name}
+ {t(cat.name)}
  </h3>
  </div>
  {/* 箭头悬停特效 (改用红色基调) */}
@@ -636,7 +858,7 @@ export default function Home() {
  playsInline
  preload="metadata"
  poster="/img/lanchuang/factory-2.jpg"
- aria-label="Handan Lanchuang fastener production"
+ aria-label={t("Handan Lanchuang fastener production")}
  className="w-full aspect-[16/10] object-cover transform group-hover:scale-105 transition-transform duration-1000 ease-out"
  >
  <source src="/video/company-profile.mp4" type="video/mp4" />
@@ -646,17 +868,17 @@ export default function Home() {
  
  {/* 右侧：企业文案 */}
  <div className="w-full lg:w-[45%] flex flex-col items-start relative pl-0 lg:pl-10">
- <span className="text-[10px] font-bold text-red-500 tracking-[0.4em] uppercase mb-4">Who We Are</span>
+ <span className="text-[10px] font-bold text-red-500 tracking-[0.4em] uppercase mb-4">{t("Who We Are")}</span>
  <h3 className="text-2xl md:text-3xl font-bold text-white mb-5 md:mb-8 leading-tight">
- Handan Lanchuang Fastener<br/>Manufacturing Co., Ltd.
+ {t("Handan Lanchuang Fastener")}<br/>{t("Manufacturing Co., Ltd.")}
  </h3>
  
  <div className="text-slate-300 leading-relaxed text-sm md:text-base font-medium flex flex-col gap-4">
  <p>
- Located in Yongnian District, Handan City, Hebei Province, Handan Lanchuang Fastener Manufacturing Co., Ltd. is a professional manufacturer and supplier in China&apos;s largest fastener industrial cluster.
+ {t("Located in Yongnian District, Handan City, Hebei Province, Handan Lanchuang Fastener Manufacturing Co., Ltd. is a professional manufacturer and supplier in China's largest fastener industrial cluster.")}
  </p>
  <p>
- We produce a full range of standard and OEM fasteners for engineering, construction, new energy, steel structure, machinery and other industries. Complete production lines and strict quality control help us deliver reliable products, competitive prices and efficient service.
+ {t("We produce a full range of standard and OEM fasteners for engineering, construction, new energy, steel structure, machinery and other industries. Complete production lines and strict quality control help us deliver reliable products, competitive prices and efficient service.")}
  </p>
  </div>
  </div>
@@ -680,7 +902,7 @@ export default function Home() {
  ].map((stat, idx) => (
  <div key={idx} className={`flex flex-col items-center text-center border-white/20 px-2 md:px-4 ${idx % 2 === 0 ? 'border-r' : ''} ${idx < 3 ? 'md:border-r' : 'md:border-r-0'}`}>
  <div className="text-3xl sm:text-4xl md:text-6xl font-black text-white mb-2 tracking-tight">{stat.num}</div>
- <div className="text-[9px] md:text-[11px] text-red-100 font-bold tracking-[0.15em] md:tracking-[0.25em] uppercase leading-relaxed">{stat.label}</div>
+ <div className="text-[9px] md:text-[11px] text-red-100 font-bold tracking-[0.15em] md:tracking-[0.25em] uppercase leading-relaxed">{t(stat.label)}</div>
  </div>
  ))}
  </div>
@@ -689,7 +911,7 @@ export default function Home() {
  {/* Our Services 卡片区 */}
  <div className="relative w-full bg-gradient-to-b from-slate-100 via-white to-slate-50 pt-12 pb-16 md:pt-14 md:pb-20 px-6 md:px-12 z-20 flex flex-col items-center">
  <h2 className="text-3xl md:text-[clamp(2rem,4vw,3.25rem)] font-black font-yahei text-slate-900 mb-8 md:mb-10 text-center tracking-tighter leading-none">
- Services
+ {t("Services")}
  </h2>
 
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-8 w-full max-w-[1600px]">
@@ -702,7 +924,7 @@ export default function Home() {
  <div className="absolute inset-0 overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.08)] bg-white border border-slate-100 transition-all duration-700 group-hover:scale-[1.02] group-hover:shadow-[0_25px_55px_rgba(220,38,38,0.15)] group-hover:border-red-600/30">
  <img
  src={svc.img}
- alt={svc.title}
+ alt={t(svc.title)}
  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
  />
  <div className="absolute inset-0 bg-gradient-to-t from-[#060913]/90 via-[#060913]/30 to-transparent opacity-90 group-hover:opacity-80 transition-opacity duration-700 pointer-events-none"></div>
@@ -711,7 +933,7 @@ export default function Home() {
  <div>
  <div className="text-[8px] md:text-[10px] font-bold text-red-500 tracking-[0.2em] md:tracking-[0.3em] uppercase mb-2 md:mb-3">0{idx + 1}</div>
  <h3 className="text-white text-sm sm:text-base md:text-2xl font-black tracking-tight leading-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]">
- {svc.title}
+ {t(svc.title)}
  </h3>
  </div>
  <div className="w-9 h-9 md:w-10 md:h-10 border border-white/60 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-500">
@@ -730,10 +952,10 @@ export default function Home() {
  <div className="relative w-full bg-gradient-to-b from-slate-50 to-white py-16 px-6 md:py-20 md:px-12 z-20 flex flex-col items-center">
  {/* 居中标题 */}
  <h2 className="text-3xl md:text-[clamp(2rem,4vw,3.25rem)] font-black font-yahei text-slate-900 text-center tracking-tighter leading-tight md:leading-none mb-4">
- Industry Applications
+ {t("Industry Applications")}
  </h2>
  <p className="text-slate-500 text-sm md:text-base text-center max-w-2xl mb-8 md:mb-12 font-medium leading-relaxed">
- Fastener solutions for demanding projects, with standard and customized production support.
+ {t("Fastener solutions for demanding projects, with standard and customized production support.")}
  </p>
 
  {/* 主显示区：左侧 6 张缩略图（同一列）+ 右侧放大预览 */}
@@ -748,7 +970,7 @@ export default function Home() {
  onClick={() => setActiveScenario(idx)}
  className={`relative w-full h-[72px] sm:h-[80px] lg:h-auto lg:flex-1 cursor-pointer overflow-hidden border-2 transition-all duration-300 ${isActive ? 'border-red-600 shadow-[0_10px_20px_rgba(220,38,38,0.25)] scale-[1.02]' : 'border-transparent hover:border-red-300 opacity-70 hover:opacity-100'}`}
  >
- <img src={scenario.bgImg} alt={scenario.title} className="w-full h-full object-cover" />
+ <img src={scenario.bgImg} alt={t(scenario.title)} className="w-full h-full object-cover" />
  <div className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}></div>
  <div className={`absolute top-1 left-2 text-[10px] font-black tracking-widest ${isActive ? 'text-red-600' : 'text-white'}`}>{scenario.id}</div>
  </div>
@@ -763,12 +985,12 @@ export default function Home() {
  key={idx}
  className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${activeScenario === idx ? 'opacity-100' : 'opacity-0'}`}
  >
- <img src={scenario.bgImg} alt={scenario.title} className="w-full h-full object-cover" />
+ <img src={scenario.bgImg} alt={t(scenario.title)} className="w-full h-full object-cover" />
  <div className="absolute inset-0 bg-gradient-to-t from-[#060913]/85 via-[#060913]/10 to-transparent"></div>
  <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 md:bottom-8 md:left-8 md:right-8 text-white">
- <div className="text-[9px] font-bold tracking-[0.25em] text-red-400 mb-2">APPLICATION {scenario.id}</div>
- <h3 className="text-xl sm:text-2xl md:text-3xl font-black mb-2 leading-tight">{scenario.title}</h3>
- <p className="hidden sm:block max-w-xl text-sm text-slate-200 leading-relaxed">{scenario.desc}</p>
+ <div className="text-[9px] font-bold tracking-[0.25em] text-red-400 mb-2">{t("APPLICATION")} {scenario.id}</div>
+ <h3 className="text-xl sm:text-2xl md:text-3xl font-black mb-2 leading-tight">{t(scenario.title)}</h3>
+ <p className="hidden sm:block max-w-xl text-sm text-slate-200 leading-relaxed">{t(scenario.desc)}</p>
  </div>
  </div>
  ))}
@@ -783,52 +1005,22 @@ export default function Home() {
  {/* 左侧：联系信息与标语 */}
  <div className="w-full lg:w-[40%] flex flex-col items-start justify-center">
  <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-5 md:mb-8 tracking-tight leading-tight">
- Let&apos;s Start a Conversation
+ {t("Let's Start a Conversation")}
  </h2>
  <p className="text-slate-600 leading-relaxed mb-8 md:mb-12 text-sm md:text-base font-medium max-w-md">
- Tell us the product standard, size, finish, quantity or drawing requirements. Our team will help you develop the right standard or OEM fastener solution.
+ {t("Tell us the product standard, size, finish, quantity or drawing requirements. Our team will help you develop the right standard or OEM fastener solution.")}
  </p>
 
  <div className="flex flex-col gap-6 md:gap-8 w-full">
- {/* Primary contact */}
- <div className="flex items-start gap-6 group cursor-pointer">
- <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
- <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
- </div>
- <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · White Cheng</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 133 3310 5125</p>
- </div>
- </div>
- {/* Phone */}
- <div className="flex items-start gap-6 group cursor-pointer">
- <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
- <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
- </div>
- <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · Ava</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 177 3100 7148</p>
- </div>
- </div>
-
- {/* WhatsApp */}
- <div className="flex items-start gap-6 group cursor-pointer">
- <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
- <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
- </div>
- <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · Flynn</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 152 3209 0227</p>
- </div>
- </div>
+ <ContactMethods locale={locale} />
  {/* Location */}
  <div className="flex items-start gap-6 group cursor-pointer">
  <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
  <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
  </div>
  <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">Headquarters</p>
- <p className="text-base font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors">West Zone 3-46, Hebeipu Standard Parts Industrial City,<br/>Yongnian District, Handan, Hebei, China</p>
+ <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">{t("Headquarters")}</p>
+ <p className="text-base font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors">{t("West Zone 3-46, Hebeipu Standard Parts Industrial City,")}<br/>{t("Yongnian District, Handan, Hebei, China")}</p>
  </div>
  </div>
  </div>
@@ -843,27 +1035,27 @@ export default function Home() {
  {/* 顶角红色滑动装饰线 */}
  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 to-red-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out"></div>
  
- <h3 className="text-2xl font-bold text-slate-900 mb-8 md:mb-10">Send an Inquiry</h3>
+ <h3 className="text-2xl font-bold text-slate-900 mb-8 md:mb-10">{t("Send an Inquiry")}</h3>
  
  <form className="flex flex-col gap-6">
  {/* 姓名与邮箱 */}
  <div className="flex flex-col md:flex-row gap-6">
  <div className="flex-1 relative">
- <input type="text" id="name" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder="Name" />
- <label htmlFor="name" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">Your Name</label>
+ <input type="text" id="name" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder={t("Name")} />
+ <label htmlFor="name" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">{t("Your Name")}</label>
  </div>
  <div className="flex-1 relative">
- <input type="email" id="email" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder="Email" />
- <label htmlFor="email" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">Email Address</label>
+ <input type="email" id="email" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder={t("Email")} />
+ <label htmlFor="email" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">{t("Email Address")}</label>
  </div>
  </div>
  
  {/* 意向产品下拉框 */}
  <div className="relative">
  <select id="interest" defaultValue="" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all appearance-none cursor-pointer invalid:text-slate-400">
- <option value="" disabled hidden>Product of Interest</option>
- {categories.map((cat) => <option key={cat} value={String(cat).toLowerCase().replaceAll(' ', '-')} className="text-slate-900">{cat}</option>)}
- <option value="oem" className="text-slate-900">OEM / Customized Fasteners</option>
+ <option value="" disabled hidden>{t("Product of Interest")}</option>
+ {categories.map((cat) => <option key={cat} value={String(cat).toLowerCase().replaceAll(' ', '-')} className="text-slate-900">{t(cat)}</option>)}
+ <option value="oem" className="text-slate-900">{t("OEM / Customized Fasteners")}</option>
  </select>
  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -872,13 +1064,13 @@ export default function Home() {
 
  {/* 留言内容区 */}
  <div className="relative">
- <textarea id="message" rows={4} className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent resize-none" placeholder="Message"></textarea>
- <label htmlFor="message" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">Project Details or Questions</label>
+ <textarea id="message" rows={4} className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent resize-none" placeholder={t("Message")}></textarea>
+ <label htmlFor="message" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">{t("Project Details or Questions")}</label>
  </div>
 
  {/* 提交按钮 */}
  <button type="button" className="w-full bg-[#0a0f1c] text-white py-5 font-bold text-sm tracking-widest uppercase hover:bg-red-600 hover:shadow-[0_15px_30px_rgba(220,38,38,0.3)] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 mt-4 group">
- SUBMIT INQUIRY
+ {t("SUBMIT INQUIRY")}
  <svg className="w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
  </button>
  </form>
@@ -903,10 +1095,10 @@ export default function Home() {
  {/* 顶部 Banner */}
  <div className="relative w-full h-[34vh] min-h-[240px] md:h-[45vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/40 z-10"></div>
- <img src="/img/lanchuang/factory-1.jpg" alt="Fastener production facility" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src="/img/lanchuang/factory-1.jpg" alt={t("Fastener production facility")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-6 md:px-12">
  <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
- Products
+ {t("Products")}
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
  </div>
@@ -920,14 +1112,14 @@ export default function Home() {
  <div className="lg:sticky lg:top-40 bg-white shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-slate-100 p-4 lg:p-5">
  <h3 className="text-xs font-black text-slate-900 mb-4 uppercase tracking-widest border-b border-slate-100 pb-4 flex items-center gap-2">
  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" /></svg>
- Categories
+ {t("Categories")}
  </h3>
  <ul className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
  <li
  onClick={() => setActiveCategory('All')}
  className={`shrink-0 min-w-max px-4 lg:px-3 py-3 cursor-pointer font-bold text-[12px] transition-all duration-300 flex items-center justify-between gap-3 group ${activeCategory === 'All' ? 'bg-red-600 text-white shadow-[0_8px_20px_rgba(220,38,38,0.25)]' : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}`}
  >
- <span>All Products</span>
+ <span>{t("All Products")}</span>
  <span className={`transform transition-transform duration-300 shrink-0 ${activeCategory === 'All' ? 'translate-x-0' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`}>&rsaquo;</span>
  </li>
  {categories.map((cat, idx) => (
@@ -936,7 +1128,7 @@ export default function Home() {
  onClick={() => setActiveCategory(cat as string)}
  className={`shrink-0 min-w-max px-4 lg:px-3 py-3 cursor-pointer font-bold text-[12px] transition-all duration-300 flex items-center justify-between gap-3 group ${activeCategory === cat ? 'bg-red-600 text-white shadow-[0_8px_20px_rgba(220,38,38,0.25)]' : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}`}
  >
- <span className="capitalize line-clamp-1">{cat as string}</span>
+ <span className="capitalize line-clamp-1">{t(cat as string)}</span>
  <span className={`transform transition-transform duration-300 shrink-0 ${activeCategory === cat ? 'translate-x-0' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`}>&rsaquo;</span>
  </li>
  ))}
@@ -955,14 +1147,14 @@ export default function Home() {
  
  {/* 产品图区 */}
  <div className="w-full aspect-square bg-slate-50 relative overflow-hidden p-4 md:p-8 flex items-center justify-center">
- <img src={prod.Thumbnail || 'https://via.placeholder.com/400?text=No+Image'} className="w-full h-full object-contain mix-blend-multiply" alt={prod['Product Name']} />
+ <img src={prod.Thumbnail || 'https://via.placeholder.com/400?text=No+Image'} className="w-full h-full object-contain mix-blend-multiply" alt={t(prod['Product Name'])} />
  </div>
 
  {/* 产品信息区 */}
  <div className="px-4 py-4 md:px-7 md:py-6 flex flex-col">
- <div className="text-[8px] md:text-[10px] text-red-500 font-bold uppercase tracking-widest mb-2 md:mb-3">{prod.Category}</div>
+ <div className="text-[8px] md:text-[10px] text-red-500 font-bold uppercase tracking-widest mb-2 md:mb-3">{t(prod.Category)}</div>
  <h3 className="text-sm md:text-lg font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors line-clamp-2 min-h-[2.6em]">
- {prod['Product Name']}
+ {t(prod['Product Name'])}
  </h3>
  </div>
 
@@ -972,7 +1164,7 @@ export default function Home() {
  {/* 无产品状态 */}
  {filteredProducts.length === 0 && (
  <div className="col-span-full py-20 text-center">
- <p className="text-slate-400 text-lg">No products found in this category.</p>
+ <p className="text-slate-400 text-lg">{t("No products found in this category.")}</p>
  </div>
  )}
  </div>
@@ -996,11 +1188,11 @@ export default function Home() {
  {/* 顶部面包屑 */}
  <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 pt-[104px] md:pt-32 pb-6">
  <div className="flex flex-wrap items-center gap-2 md:gap-3 text-[10px] md:text-[11px] font-bold text-slate-500 tracking-[0.1em] md:tracking-[0.15em] uppercase">
- <span className="cursor-pointer hover:text-red-600 transition-colors" onClick={() => transitionTo('home')}>Home</span>
+ <span className="cursor-pointer hover:text-red-600 transition-colors" onClick={() => transitionTo('home')}>{t("Home")}</span>
  <span className="text-slate-300">/</span>
- <span className="cursor-pointer hover:text-red-600 transition-colors" onClick={() => { setActiveCategory(selectedProduct.Category); transitionTo('products'); }}>Products</span>
+ <span className="cursor-pointer hover:text-red-600 transition-colors" onClick={() => { setActiveCategory(selectedProduct.Category); transitionTo('products'); }}>{t("Products")}</span>
  <span className="text-slate-300">/</span>
- <span className="text-slate-900">{selectedProduct.Category}</span>
+ <span className="text-slate-900">{t(selectedProduct.Category)}</span>
  </div>
  </div>
 
@@ -1013,7 +1205,7 @@ export default function Home() {
  <div className="bg-white border border-slate-200">
  <div className="flex items-center justify-center gap-2 py-4 border-b border-slate-200">
  <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5a1.99 1.99 0 011.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z" /></svg>
- <span className="text-[12px] font-bold text-slate-900 tracking-[0.15em] uppercase">Product Center</span>
+ <span className="text-[12px] font-bold text-slate-900 tracking-[0.15em] uppercase">{t("Product Center")}</span>
  </div>
  <ul className="flex flex-col">
  {categories.map((cat, idx) => {
@@ -1024,7 +1216,7 @@ export default function Home() {
  onClick={() => { setActiveCategory(cat as string); transitionTo('products'); }}
  className={`px-5 py-3 text-[12px] cursor-pointer border-t border-slate-100 transition-colors ${active ? 'text-red-600 font-bold' : 'text-slate-700 hover:text-red-600'}`}
  >
- {cat as string}
+ {t(cat as string)}
  </li>
  );
  })}
@@ -1035,20 +1227,20 @@ export default function Home() {
  <div className="bg-white border border-slate-200">
  <div className="flex items-center justify-center gap-2 py-4 border-b border-slate-200">
  <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>
- <span className="text-[12px] font-bold text-slate-900 tracking-[0.15em] uppercase">Contact Us</span>
+ <span className="text-[12px] font-bold text-slate-900 tracking-[0.15em] uppercase">{t("Contact Us")}</span>
  </div>
  <ul className="flex flex-col text-[12px] text-slate-600">
  <li className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
  <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
- <span>White Cheng: +86 133 3310 5125</span>
+ <a href="https://wa.me/8613333105125" target="_blank" rel="noopener noreferrer" className="hover:text-[#128c4a] transition-colors">{t("White Cheng: +86 133 3310 5125")}</a>
  </li>
  <li className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
- <span>Ava: +86 177 3100 7148</span>
+ <a href="https://wa.me/8617731007148" target="_blank" rel="noopener noreferrer" className="hover:text-[#128c4a] transition-colors">{t("Ava: +86 177 3100 7148")}</a>
  </li>
  <li className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
- <span>Flynn: +86 152 3209 0227</span>
+ <a href="https://wa.me/8615232090227" target="_blank" rel="noopener noreferrer" className="hover:text-[#128c4a] transition-colors">{t("Flynn: +86 152 3209 0227")}</a>
  </li>
  </ul>
  </div>
@@ -1060,7 +1252,7 @@ export default function Home() {
  <div className="w-full aspect-square bg-slate-50 overflow-hidden flex items-center justify-center">
  <img
  src={selectedProduct.Thumbnail || '/img/lanchuang/factory-1.jpg'}
- alt={selectedProduct['Product Name']}
+ alt={t(selectedProduct['Product Name'])}
  className="w-full h-full object-contain"
  />
  </div>
@@ -1071,7 +1263,7 @@ export default function Home() {
  <div className="w-full lg:w-[320px] shrink-0">
  <div className="sticky top-32 flex flex-col">
  <h1 className="text-2xl md:text-3xl font-bold text-slate-900 leading-snug mb-4">
- {selectedProduct['Product Name']}
+ {t(selectedProduct['Product Name'])}
  </h1>
  <div className="w-20 h-[2px] bg-red-600 mb-8"></div>
 
@@ -1081,7 +1273,7 @@ export default function Home() {
  className="flex items-center gap-2 text-red-600 font-medium text-sm hover:text-red-700 transition-colors"
  >
  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
- Contact Us
+ {t("Contact Us")}
  </button>
  <a
  href="https://wa.me/8615232090227"
@@ -1090,7 +1282,7 @@ export default function Home() {
  className="flex items-center gap-2 text-red-600 font-medium text-sm hover:text-red-700 transition-colors"
  >
  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
- Chat Now
+ {t("Chat Now")}
  </a>
  </div>
 
@@ -1098,7 +1290,7 @@ export default function Home() {
  onClick={() => transitionTo('contact')}
  className="w-full py-4 bg-red-600 text-white font-bold text-xs tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.3)] transition-all duration-300"
  >
- INQUIRE NOW
+ {t("INQUIRE NOW")}
  </button>
  </div>
  </div>
@@ -1108,13 +1300,15 @@ export default function Home() {
  <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-16 md:pb-24">
  <div className="flex items-center gap-3 mb-6 border-b border-slate-200 pb-4">
  <div className="w-1 h-6 bg-red-600"></div>
- <h2 className="text-lg font-bold text-slate-900">Product Description</h2>
+ <h2 className="text-lg font-bold text-slate-900">{t("Product Description")}</h2>
  </div>
  <div
  ref={detailContentRef}
  className="product-html-content"
  dangerouslySetInnerHTML={{
- __html: selectedProduct['Description HTML'] || '<p class="text-slate-500">No detailed description available for this product.</p>'
+ __html: selectedProduct['Description HTML']
+ ? translateProductHtml(locale, selectedProduct['Description HTML'])
+ : `<p class="text-slate-500">${t('No detailed description available for this product.')}</p>`
  }}
  />
  </div>
@@ -1140,22 +1334,22 @@ export default function Home() {
  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-[#0a0f1c] z-10"></div>
  <img
  src={selectedServiceDetail.img}
- alt={selectedServiceDetail.title}
+ alt={t(selectedServiceDetail.title)}
  className="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm scale-105"
  />
 
  <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center text-center mt-4 md:mt-12">
  <div className="flex flex-wrap justify-center items-center gap-2 md:gap-3 text-[9px] md:text-[10px] font-bold text-slate-300 tracking-[0.12em] md:tracking-[0.2em] uppercase mb-5 md:mb-8">
- <span className="cursor-pointer hover:text-white transition-colors" onClick={() => transitionTo('home')}>Home</span>
+ <span className="cursor-pointer hover:text-white transition-colors" onClick={() => transitionTo('home')}>{t("Home")}</span>
  <span className="text-red-500">/</span>
- <span className="text-white">Our Services</span>
+ <span className="text-white">{t("Our Services")}</span>
  <span className="text-red-500">/</span>
  <span className="text-white">0{selectedServiceDetail.index + 1}</span>
  </div>
 
- <span className="text-red-500 font-bold tracking-[0.3em] uppercase text-xs mb-6 block">{selectedServiceDetail.tagline}</span>
+ <span className="text-red-500 font-bold tracking-[0.3em] uppercase text-xs mb-6 block">{t(selectedServiceDetail.tagline)}</span>
  <h1 className="text-3xl md:text-6xl font-black font-yahei text-white mb-6 tracking-tight max-w-4xl leading-tight drop-shadow-2xl">
- {selectedServiceDetail.title}.
+ {t(selectedServiceDetail.title)}.
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
  </div>
@@ -1167,30 +1361,30 @@ export default function Home() {
  <div className="w-full lg:w-1/2 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
  <img
  src={selectedServiceDetail.img}
- alt={selectedServiceDetail.title}
+ alt={t(selectedServiceDetail.title)}
  className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
  />
  </div>
  <div className="w-full lg:w-1/2 flex flex-col items-start lg:pl-8">
- <span className="text-xs font-bold text-red-600 tracking-[0.3em] uppercase mb-4">0{selectedServiceDetail.index + 1} — Our Service</span>
+ <span className="text-xs font-bold text-red-600 tracking-[0.3em] uppercase mb-4">0{selectedServiceDetail.index + 1} {t("— Our Service")}</span>
  <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 md:mb-8 leading-tight tracking-tighter">
- {selectedServiceDetail.title}
+ {t(selectedServiceDetail.title)}
  </h2>
  <p className="text-slate-600 leading-relaxed text-base mb-8 md:mb-12 font-medium">
- {selectedServiceDetail.desc}
+ {t(selectedServiceDetail.desc)}
  </p>
  <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 sm:gap-4">
  <button
  onClick={() => transitionTo('contact')}
  className="w-full sm:w-auto bg-red-600 text-white px-8 py-4 font-bold text-xs tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.3)] hover:-translate-y-1 transition-all duration-300"
  >
- GET IN TOUCH
+ {t("GET IN TOUCH")}
  </button>
  <button
  onClick={() => transitionTo('home')}
  className="w-full sm:w-auto bg-slate-100 text-slate-900 border border-slate-200 px-8 py-4 font-bold text-xs tracking-widest hover:bg-slate-200 transition-all duration-300"
  >
- BACK TO HOME
+ {t("BACK TO HOME")}
  </button>
  </div>
  </div>
@@ -1213,10 +1407,10 @@ export default function Home() {
  {/* About 顶部 Banner */}
  <div className="relative w-full h-[34vh] min-h-[240px] md:h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/50 z-10"></div>
- <img src="/img/lanchuang/factory-1.jpg" alt="Handan Lanchuang factory" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src="/img/lanchuang/factory-1.jpg" alt={t("Handan Lanchuang factory")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-6 md:px-12">
  <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
- About Us
+ {t("About Us")}
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
  </div>
@@ -1227,24 +1421,24 @@ export default function Home() {
  <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
  {/* 左侧：企业大楼/生产基地展示 */}
  <div className="w-full lg:w-1/2 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
- <img src="/img/lanchuang/factory-2.jpg" alt="Handan Lanchuang production equipment" className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
+ <img src="/img/lanchuang/factory-2.jpg" alt={t("Handan Lanchuang production equipment")} className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700"></div>
  </div>
  {/* 右侧：详细介绍与数据统计 */}
  <div className="w-full lg:w-1/2 flex flex-col items-start lg:pl-8">
  <span className="text-xs font-bold text-red-600 tracking-[0.3em] uppercase mb-4"></span>
  <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6 md:mb-8 leading-tight tracking-tighter">
- Handan Lanchuang Fastener<br/>Manufacturing Co., Ltd.
+ {t("Handan Lanchuang Fastener")}<br/>{t("Manufacturing Co., Ltd.")}
  </h2>
  <div className="text-slate-600 leading-relaxed mb-4 md:mb-12 text-sm md:text-base font-medium flex flex-col gap-4">
  <p>
- Handan Lanchuang Fastener Manufacturing Co., Ltd. is a professional manufacturer and supplier of high-quality fasteners, located in Yongnian District, Handan City, Hebei Province, well known as China&apos;s largest fastener industrial cluster.
+ {t("Handan Lanchuang Fastener Manufacturing Co., Ltd. is a professional manufacturer and supplier of high-quality fasteners, located in Yongnian District, Handan City, Hebei Province, well known as China's largest fastener industrial cluster.")}
  </p>
  <p>
- We specialize in standard and OEM bolts, nuts, threaded rods, anchor bolts, photovoltaic fasteners, construction fasteners, mining accessories, railway fittings and customized metal components. Products are available to GB, DIN, ANSI and ISO standards with a range of surface treatments.
+ {t("We specialize in standard and OEM bolts, nuts, threaded rods, anchor bolts, photovoltaic fasteners, construction fasteners, mining accessories, railway fittings and customized metal components. Products are available to GB, DIN, ANSI and ISO standards with a range of surface treatments.")}
  </p>
  <p>
- Guided by “Quality First, Credit Supreme, Long-term Cooperation,” we provide reliable products, competitive prices and efficient service for global clients, supporting both large-volume orders and customized solutions.
+ {t("Guided by “Quality First, Credit Supreme, Long-term Cooperation,” we provide reliable products, competitive prices and efficient service for global clients, supporting both large-volume orders and customized solutions.")}
  </p>
  </div>
  
@@ -1263,12 +1457,12 @@ export default function Home() {
  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
  </svg>
  </div>
- <h2 className="text-2xl md:text-3xl font-black text-white mb-6 leading-tight">Partner With Lan Chuang</h2>
+ <h2 className="text-2xl md:text-3xl font-black text-white mb-6 leading-tight">{t("Partner With Lan Chuang")}</h2>
  <p className="text-slate-400 mb-10 text-sm md:text-base leading-relaxed max-w-md">
- Build a reliable long-term supply partnership with a fastener manufacturer located at the heart of China&apos;s fastener industry.
+ {t("Build a reliable long-term supply partnership with a fastener manufacturer located at the heart of China's fastener industry.")}
  </p>
  <button onClick={() => transitionTo('contact')} className="bg-red-600 text-white px-10 py-4 font-bold text-xs tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.3)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-3 group">
- GET IN TOUCH
+ {t("GET IN TOUCH")}
  <span className="text-lg leading-none transform group-hover:translate-x-1 transition-transform duration-300">&rsaquo;</span>
  </button>
  </div>
@@ -1277,7 +1471,7 @@ export default function Home() {
  <div className="w-full lg:w-1/2 max-w-[555px] mx-auto relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
  <img
  src="/img/lanchuang/factory-1.jpg"
- alt="Lan Chuang fastener production workshop"
+ alt={t("Lan Chuang fastener production workshop")}
  className="w-full aspect-[4/3] object-cover"
  />
  </div>
@@ -1299,10 +1493,10 @@ export default function Home() {
  {/* Services 顶部 Banner */}
  <div className="relative w-full h-[34vh] min-h-[240px] md:h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/50 z-10"></div>
- <img src="/img/lanchuang/factory-2.jpg" alt="Fastener manufacturing services" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src="/img/lanchuang/factory-2.jpg" alt={t("Fastener manufacturing services")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-6 md:px-12">
  <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
- Services
+ {t("Services")}
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
  </div>
@@ -1315,27 +1509,27 @@ export default function Home() {
  {/* 图片 */}
  <div className="w-full lg:w-1/2 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
  <div className="absolute inset-0 bg-red-600/10 mix-blend-overlay group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none"></div>
- <img src={svc.img} alt={svc.title} className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
+ <img src={svc.img} alt={t(svc.title)} className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
  </div>
  {/* 内容 */}
  <div className="w-full lg:w-1/2 flex flex-col items-start">
  <div className="w-14 h-14 md:w-16 md:h-16 bg-red-50 flex items-center justify-center text-red-600 mb-6 md:mb-8 border border-red-100 shadow-sm">
  {svc.icon}
  </div>
- <div className="text-[10px] text-red-500 font-bold tracking-[0.3em] uppercase mb-4">Service {String(idx + 1).padStart(2, '0')}</div>
+ <div className="text-[10px] text-red-500 font-bold tracking-[0.3em] uppercase mb-4">{t("Service")} {String(idx + 1).padStart(2, '0')}</div>
  <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6 leading-tight">
- {svc.title}
+ {t(svc.title)}
  </h2>
  <p className="text-slate-600 leading-relaxed text-sm md:text-base mb-8 md:mb-10 max-w-lg">
- {svc.desc}
+ {t(svc.desc)}
  <br/><br/>
- Share your required standard, dimensions, material, finish, quantity or drawings, and our team will review the most suitable production solution for your order.
+ {t("Share your required standard, dimensions, material, finish, quantity or drawings, and our team will review the most suitable production solution for your order.")}
  </p>
  <button onClick={() => transitionTo('contact')} className="flex items-center gap-4 text-sm font-bold text-slate-900 group">
  <div className="w-12 h-12 bg-slate-100 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all duration-300 shadow-sm">
  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
  </div>
- <span className="group-hover:text-red-600 transition-colors uppercase tracking-widest text-xs">Inquire More</span>
+ <span className="group-hover:text-red-600 transition-colors uppercase tracking-widest text-xs">{t("Inquire More")}</span>
  </button>
  </div>
  </div>
@@ -1350,31 +1544,31 @@ export default function Home() {
  
  <div className="w-full max-w-[1400px] mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16">
  <div className="w-full md:w-1/2">
- <h2 className="text-3xl md:text-5xl font-black text-white mb-6 md:mb-8 leading-tight">Our Commitment - Reliable Fastener Supply</h2>
+ <h2 className="text-3xl md:text-5xl font-black text-white mb-6 md:mb-8 leading-tight">{t("Our Commitment - Reliable Fastener Supply")}</h2>
  <p className="text-slate-400 leading-relaxed mb-10">
- Every order is supported by controlled production, dimensional consistency and quality inspection, with efficient communication from quotation through delivery.
+ {t("Every order is supported by controlled production, dimensional consistency and quality inspection, with efficient communication from quotation through delivery.")}
  </p>
  <div className="grid grid-cols-2 gap-4 md:gap-8">
  <div>
- <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2">GB<span className="text-red-500"> / DIN</span></div>
- <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Standard Production</div>
+ <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2">{t("GB")}<span className="text-red-500"> {t("/ DIN")}</span></div>
+ <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{t("Standard Production")}</div>
  </div>
  <div>
- <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2">ANSI<span className="text-red-500"> / ISO</span></div>
- <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">International Supply</div>
+ <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2">{t("ANSI")}<span className="text-red-500"> {t("/ ISO")}</span></div>
+ <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{t("International Supply")}</div>
  </div>
  </div>
  </div>
  <div className="w-full md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-6">
  <div className="bg-white/5 backdrop-blur-md border border-white/10 p-6 md:p-8 hover:bg-white/10 transition-colors">
  <svg className="w-8 h-8 text-red-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
- <h4 className="text-white font-bold mb-2">Quality Control</h4>
- <p className="text-slate-400 text-sm">Consistent dimensions and stable batch performance.</p>
+ <h4 className="text-white font-bold mb-2">{t("Quality Control")}</h4>
+ <p className="text-slate-400 text-sm">{t("Consistent dimensions and stable batch performance.")}</p>
  </div>
  <div className="bg-white/5 backdrop-blur-md border border-white/10 p-6 md:p-8 hover:bg-white/10 transition-colors sm:mt-8">
  <svg className="w-8 h-8 text-red-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
- <h4 className="text-white font-bold mb-2">OEM Capability</h4>
- <p className="text-slate-400 text-sm">Customized metal components made to project needs.</p>
+ <h4 className="text-white font-bold mb-2">{t("OEM Capability")}</h4>
+ <p className="text-slate-400 text-sm">{t("Customized metal components made to project needs.")}</p>
  </div>
  </div>
  </div>
@@ -1395,10 +1589,10 @@ export default function Home() {
  {/* Contact 顶部 Banner */}
  <div className="relative w-full h-[34vh] min-h-[240px] md:h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/60 z-10"></div>
- <img src="/img/lanchuang/factory-2.jpg" alt="Contact Handan Lanchuang" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src="/img/lanchuang/factory-2.jpg" alt={t("Contact Handan Lanchuang")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-6 md:px-12">
  <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
- Contact Us
+ {t("Contact Us")}
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
  </div>
@@ -1411,51 +1605,22 @@ export default function Home() {
  {/* 左侧：联系信息与标语 */}
  <div className="w-full lg:w-[40%] flex flex-col items-start justify-center">
  <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-5 md:mb-8 tracking-tight leading-tight">
- Let&apos;s Start a Conversation
+ {t("Let's Start a Conversation")}
  </h2>
  <p className="text-slate-600 leading-relaxed mb-8 md:mb-12 text-sm md:text-base font-medium max-w-md">
- Tell us the product standard, size, finish, quantity or drawing requirements. Our team will help you develop the right standard or OEM fastener solution.
+ {t("Tell us the product standard, size, finish, quantity or drawing requirements. Our team will help you develop the right standard or OEM fastener solution.")}
  </p>
 
  <div className="flex flex-col gap-6 md:gap-8 w-full">
- {/* Email */}
- <div className="flex items-start gap-6 group cursor-pointer">
- <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
- <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
- </div>
- <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · White Cheng</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 133 3310 5125</p>
- </div>
- </div>
- {/* Phone */}
- <div className="flex items-start gap-6 group cursor-pointer">
- <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
- <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
- </div>
- <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · Ava</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 177 3100 7148</p>
- </div>
- </div>
- {/* WhatsApp */}
- <div className="flex items-start gap-6 group cursor-pointer">
- <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
- <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
- </div>
- <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">WhatsApp · Flynn</p>
- <p className="text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors">+86 152 3209 0227</p>
- </div>
- </div>
+ <ContactMethods locale={locale} />
  {/* Location */}
  <div className="flex items-start gap-6 group cursor-pointer">
  <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
  <svg className="w-5 h-5 text-slate-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
  </div>
  <div>
- <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">Headquarters</p>
- <p className="text-base font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors">West Zone 3-46, Hebeipu Standard Parts Industrial City,<br/>Yongnian District, Handan, Hebei, China</p>
+ <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1">{t("Headquarters")}</p>
+ <p className="text-base font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors">{t("West Zone 3-46, Hebeipu Standard Parts Industrial City,")}<br/>{t("Yongnian District, Handan, Hebei, China")}</p>
  </div>
  </div>
  </div>
@@ -1470,39 +1635,39 @@ export default function Home() {
  {/* 顶角红色滑动装饰线 */}
  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 to-red-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out"></div>
  
- <h3 className="text-2xl font-bold text-slate-900 mb-8 md:mb-10">Send an Inquiry</h3>
+ <h3 className="text-2xl font-bold text-slate-900 mb-8 md:mb-10">{t("Send an Inquiry")}</h3>
  
  <form className="flex flex-col gap-6">
  {/* 姓名与邮箱 */}
  <div className="flex flex-col md:flex-row gap-6">
  <div className="flex-1 relative">
- <input type="text" id="contact-name" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder="Name" />
- <label htmlFor="contact-name" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">Your Name</label>
+ <input type="text" id="contact-name" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder={t("Name")} />
+ <label htmlFor="contact-name" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">{t("Your Name")}</label>
  </div>
  <div className="flex-1 relative">
- <input type="email" id="contact-email" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder="Email" />
- <label htmlFor="contact-email" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">Email Address</label>
+ <input type="email" id="contact-email" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder={t("Email")} />
+ <label htmlFor="contact-email" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">{t("Email Address")}</label>
  </div>
  </div>
  
  {/* 电话与公司 */}
  <div className="flex flex-col md:flex-row gap-6">
  <div className="flex-1 relative">
- <input type="text" id="contact-phone" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder="Phone" />
- <label htmlFor="contact-phone" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">Phone Number</label>
+ <input type="text" id="contact-phone" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder={t("Phone")} />
+ <label htmlFor="contact-phone" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">{t("Phone Number")}</label>
  </div>
  <div className="flex-1 relative">
- <input type="text" id="contact-company" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder="Company" />
- <label htmlFor="contact-company" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">Company Name</label>
+ <input type="text" id="contact-company" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent" placeholder={t("Company")} />
+ <label htmlFor="contact-company" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">{t("Company Name")}</label>
  </div>
  </div>
  
  {/* 意向产品下拉框 */}
  <div className="relative">
  <select id="contact-interest" defaultValue="" className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all appearance-none cursor-pointer invalid:text-slate-400">
- <option value="" disabled hidden>Product of Interest</option>
- {categories.map((cat) => <option key={cat} value={String(cat).toLowerCase().replaceAll(' ', '-')} className="text-slate-900">{cat}</option>)}
- <option value="oem" className="text-slate-900">OEM / Customized Fasteners</option>
+ <option value="" disabled hidden>{t("Product of Interest")}</option>
+ {categories.map((cat) => <option key={cat} value={String(cat).toLowerCase().replaceAll(' ', '-')} className="text-slate-900">{t(cat)}</option>)}
+ <option value="oem" className="text-slate-900">{t("OEM / Customized Fasteners")}</option>
  </select>
  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -1511,13 +1676,13 @@ export default function Home() {
 
  {/* 留言内容区 */}
  <div className="relative">
- <textarea id="contact-message" rows={4} className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent resize-none" placeholder="Message"></textarea>
- <label htmlFor="contact-message" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">Project Details or Questions</label>
+ <textarea id="contact-message" rows={4} className="w-full bg-slate-50 border border-slate-200 px-6 py-4 text-sm text-slate-900 outline-none focus:border-red-500 focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all peer placeholder-transparent resize-none" placeholder={t("Message")}></textarea>
+ <label htmlFor="contact-message" className="absolute left-6 top-4 text-sm text-slate-400 transition-all peer-focus:-top-2 peer-focus:text-xs peer-focus:text-red-600 peer-focus:bg-white peer-focus:px-1 peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:bg-white peer-[:not(:placeholder-shown)]:px-1 pointer-events-none">{t("Project Details or Questions")}</label>
  </div>
 
  {/* 提交按钮 */}
  <button type="button" className="w-full bg-[#0a0f1c] text-white py-5 font-bold text-sm tracking-widest uppercase hover:bg-red-600 hover:shadow-[0_15px_30px_rgba(220,38,38,0.3)] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 mt-4 group">
- SUBMIT INQUIRY
+ {t("SUBMIT INQUIRY")}
  <svg className="w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
  </button>
  </form>

@@ -11,6 +11,30 @@
  font-family: var(--font-inter), sans-serif;
  overflow: hidden;
  }
+
+ html[lang="ar"] body {
+ font-family: Arial, Tahoma, "Segoe UI", sans-serif;
+ }
+
+ html[lang="ar"] [class*="tracking-"] {
+ letter-spacing: 0 !important;
+ }
+
+ html[dir="rtl"] .text-left {
+ text-align: right;
+ }
+
+ html[dir="rtl"] input,
+ html[dir="rtl"] textarea,
+ html[dir="rtl"] select {
+ text-align: right;
+ }
+
+ html[dir="rtl"] input + label,
+ html[dir="rtl"] textarea + label {
+ left: auto;
+ right: 1.5rem;
+ }
 }
 
 .viewport {
@@ -105,6 +129,14 @@
 .product-html-content figure {
  text-align: center;
 }
+html[dir="rtl"] .product-html-content p,
+html[dir="rtl"] .product-html-content div,
+html[dir="rtl"] .product-html-content figure,
+html[dir="rtl"] .product-html-content h1,
+html[dir="rtl"] .product-html-content h2,
+html[dir="rtl"] .product-html-content h3 {
+ text-align: right;
+ }
 .product-html-content table {
  width: 100%;
  border-collapse: collapse;
