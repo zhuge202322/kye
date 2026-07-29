@@ -304,12 +304,12 @@ export default function Home() {
 
  // 提取全局复用的 Footer 组件
  const renderFooter = () => (
- <footer className="w-full bg-slate-50 py-24 px-12 border-t border-slate-200 z-20 relative">
- <div className="w-full max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between gap-16 lg:gap-8">
+ <footer className="w-full bg-slate-50 py-16 px-6 md:py-24 md:px-12 border-t border-slate-200 z-20 relative">
+ <div className="w-full max-w-[1400px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 md:gap-8">
  
  {/* 列 1: 品牌与引导 */}
- <div className="w-full md:w-1/4 flex flex-col items-start">
-          <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt="Lan Chuang" className="w-full max-w-[230px] h-auto object-contain mb-6 mix-blend-multiply" />
+ <div className="w-full flex flex-col items-start">
+          <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt="Lan Chuang" className="w-full max-w-[190px] md:max-w-[230px] h-auto object-contain mb-6 mix-blend-multiply" />
  <h4 className="text-base font-bold text-slate-900 mb-2">Are you ready to get started?</h4>
  <p className="text-xs text-slate-500 leading-relaxed mb-6 font-medium">Contact us to tailor the most suitable product for your business.</p>
  <button onClick={() => transitionTo('contact')} className="bg-red-600 text-white px-8 py-3 font-bold text-[10px] tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.2)] hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-3 group">
@@ -319,7 +319,7 @@ export default function Home() {
  </div>
 
  {/* 列 2: Products 菜单 */}
- <div className="w-full md:w-1/4 flex flex-col items-start lg:pl-10">
+ <div className="w-full flex flex-col items-start lg:pl-10">
  <h4 className="text-sm font-black text-slate-900 tracking-widest uppercase mb-8">PRODUCTS</h4>
  <ul className="flex flex-col gap-4">
  {categories.map((cat, i) => (
@@ -332,7 +332,7 @@ export default function Home() {
  </div>
 
  {/* 列 3: Information 菜单 */}
- <div className="w-full md:w-1/4 flex flex-col items-start">
+ <div className="w-full flex flex-col items-start">
  <h4 className="text-sm font-black text-slate-900 tracking-widest uppercase mb-8">INFORMATION</h4>
  <ul className="flex flex-col gap-4">
  {[
@@ -349,7 +349,7 @@ export default function Home() {
  </div>
 
  {/* 列 4: Contact Us 联系信息 */}
- <div className="w-full md:w-1/4 flex flex-col items-start">
+ <div className="w-full flex flex-col items-start">
  <h4 className="text-sm font-black text-slate-900 tracking-widest uppercase mb-8">CONTACT US</h4>
  <ul className="flex flex-col gap-6">
  <li className="flex items-start gap-4 group">
@@ -375,9 +375,9 @@ export default function Home() {
  </div>
 
  {/* Copyright 底部版权条 */}
- <div className="w-full max-w-[1400px] mx-auto mt-24 pt-8 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between">
- <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">© 2026 Handan Lanchuang Fastener Manufacturing Co., Ltd. All Rights Reserved.</p>
- <div className="flex items-center gap-8 mt-4 md:mt-0">
+ <div className="w-full max-w-[1400px] mx-auto mt-12 md:mt-24 pt-8 border-t border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 md:gap-0">
+ <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">© 2026 Handan Lanchuang Fastener Manufacturing Co., Ltd. All Rights Reserved.</p>
+ <div className="flex flex-wrap items-center gap-5 md:gap-8">
  <span className="text-[10px] text-slate-400 font-bold hover:text-red-600 cursor-pointer uppercase tracking-widest transition-colors">Privacy Policy</span>
  <span className="text-[10px] text-slate-400 font-bold hover:text-red-600 cursor-pointer uppercase tracking-widest transition-colors">Terms of Service</span>
  </div>
@@ -390,9 +390,9 @@ export default function Home() {
  <div className="motion-overlay" id="blur-layer"></div>
 
  {/* 顶部导航栏 - 亮色玻璃态 */}
- <nav className="fixed top-0 left-0 w-full z-[1000] flex justify-between items-center px-8 md:px-12 py-2 bg-white/80 backdrop-blur-2xl border-b border-slate-200 transition-all duration-500 shadow-sm">
- <div className="cursor-pointer -ml-4 md:-ml-6" onClick={() => transitionTo('home')}>
-        <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt="Lan Chuang Fasteners" className="h-16 md:h-20 w-auto max-w-[210px] object-contain mix-blend-multiply" />
+ <nav className="fixed top-0 left-0 w-full h-[72px] md:h-auto z-[1000] flex justify-between items-center px-5 md:px-12 py-0 md:py-2 bg-white/90 backdrop-blur-2xl border-b border-slate-200 transition-all duration-500 shadow-sm">
+ <div className="cursor-pointer -ml-2 md:-ml-6" onClick={() => transitionTo('home')}>
+        <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt="Lan Chuang Fasteners" className="h-12 md:h-20 w-auto max-w-[170px] md:max-w-[210px] object-contain mix-blend-multiply" />
  </div>
  
  {/* 桌面端导航 */}
@@ -435,7 +435,7 @@ export default function Home() {
  {/* 移动端汉堡菜单按钮 */}
  <button
  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
- className="lg:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px] focus:outline-none"
+ className="lg:hidden flex flex-col justify-center items-center w-11 h-11 gap-[5px] focus:outline-none"
  aria-label="Toggle menu"
  >
  <span className={`w-6 h-[2px] bg-slate-900 transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-[7px]' : ''}`}></span>
@@ -444,13 +444,13 @@ export default function Home() {
  </button>
 
  {/* 移动端展开菜单面板 */}
- <div className={`lg:hidden fixed top-[88px] left-0 w-full bg-white border-b border-slate-200 shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 origin-top ${mobileMenuOpen ? 'opacity-100 visible scale-y-100' : 'opacity-0 invisible scale-y-0'}`}>
+ <div className={`lg:hidden fixed top-[72px] md:top-[96px] left-0 w-full bg-white border-b border-slate-200 shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 origin-top ${mobileMenuOpen ? 'opacity-100 visible scale-y-100' : 'opacity-0 invisible scale-y-0'}`}>
  <ul className="flex flex-col py-4">
  {navItems.map((item) => (
  <li
  key={item.id}
  onClick={() => { transitionTo(item.id); setMobileMenuOpen(false); }}
- className={`px-8 py-4 text-sm font-bold uppercase tracking-[0.15em] cursor-pointer border-l-4 transition-all duration-300 ${currentId === item.id ? 'text-red-600 border-red-600 bg-red-50' : 'text-slate-700 border-transparent hover:bg-slate-50 hover:text-red-600'}`}
+ className={`px-6 py-3.5 text-sm font-bold uppercase tracking-[0.15em] cursor-pointer border-l-4 transition-all duration-300 ${currentId === item.id ? 'text-red-600 border-red-600 bg-red-50' : 'text-slate-700 border-transparent hover:bg-slate-50 hover:text-red-600'}`}
  >
  {item.label}
  </li>
@@ -469,7 +469,7 @@ export default function Home() {
 
  {/* 第一屏：全屏英雄区 */}
  <div
- className="relative w-full h-screen overflow-hidden flex items-center flex-none bg-[#060913]"
+ className="relative w-full h-[calc(100svh-88px)] min-h-[560px] max-h-[760px] mt-[72px] md:mt-0 md:h-screen md:min-h-0 md:max-h-none overflow-hidden flex items-center flex-none bg-[#060913]"
  onMouseEnter={() => setHeroPaused(true)}
  onMouseLeave={() => setHeroPaused(false)}
  >
@@ -490,33 +490,33 @@ export default function Home() {
  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
  </div>
  
- <div className="hero-content relative z-10 w-full max-w-[1400px] mx-auto px-12 flex flex-col lg:flex-row items-center justify-between h-full pt-16 will-change-transform">
+ <div className="hero-content relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col lg:flex-row items-center justify-center lg:justify-between h-full pt-0 md:pt-16 pb-20 md:pb-0 will-change-transform">
  
  {/* 左侧：文案内容区 */}
  <div className="flex flex-col items-start text-left w-full lg:w-[60%]">
- <div className="flex items-center gap-4 text-[10px] font-bold text-blue-300 tracking-[0.3em] uppercase mb-8">
- <div className="w-8 h-[2px] bg-blue-300"></div>
+ <div className="flex items-center gap-3 md:gap-4 text-[9px] md:text-[10px] font-bold text-blue-300 tracking-[0.2em] md:tracking-[0.3em] uppercase mb-5 md:mb-8 leading-relaxed">
+ <div className="w-6 md:w-8 h-[2px] bg-blue-300 shrink-0"></div>
  Professional Fastener Manufacturing
  </div>
  
- <h1 className="mb-8 text-blue-200 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] text-2xl md:text-3xl lg:text-[2.5rem] font-black tracking-tight max-w-3xl">
+ <h1 className="mb-5 md:mb-8 text-blue-200 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] text-[1.65rem] md:text-3xl lg:text-[2.5rem] leading-[1.2] font-black tracking-tight max-w-3xl">
  Fasteners Built for Strength. Partnerships Built to Last.
  </h1>
  
- <p className="text-blue-100 text-sm md:text-base leading-relaxed max-w-2xl mb-12 tracking-wide font-[family-name:var(--font-inter)] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+ <p className="text-blue-100 text-sm md:text-base leading-7 md:leading-relaxed max-w-2xl mb-7 md:mb-12 tracking-normal md:tracking-wide font-[family-name:var(--font-inter)] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
  We manufacture standard and OEM bolts, nuts, anchors, threaded rods, washers and customized metal components for global engineering and industrial customers.
  </p>
  
- <div className="flex gap-6">
+ <div className="flex flex-col sm:flex-row gap-3 md:gap-6 w-full sm:w-auto max-w-[360px] sm:max-w-none">
  <button 
  onClick={() => transitionTo('products')}
- className="px-10 py-4 bg-white text-black text-xs font-bold tracking-[0.2em] uppercase hover:bg-blue-50 hover:scale-105 hover:shadow-[0_10px_30px_rgba(255,255,255,0.3)] transition-all duration-500 ease-out"
+ className="w-full sm:w-auto min-h-13 px-6 md:px-10 py-3.5 md:py-4 bg-white text-black text-[11px] md:text-xs font-bold tracking-[0.14em] md:tracking-[0.2em] whitespace-nowrap uppercase hover:bg-blue-50 hover:scale-105 hover:shadow-[0_10px_30px_rgba(255,255,255,0.3)] transition-all duration-500 ease-out"
  >
  Explore Our Products
  </button>
  <button 
  onClick={() => transitionTo('about')}
- className="px-10 py-4 bg-black/20 backdrop-blur-md text-white border border-white/30 text-xs font-bold tracking-[0.2em] uppercase hover:border-white hover:bg-white/10 transition-all duration-500 ease-out"
+ className="w-full sm:w-auto min-h-13 px-6 md:px-10 py-3.5 md:py-4 bg-black/20 backdrop-blur-md text-white border border-white/30 text-[11px] md:text-xs font-bold tracking-[0.14em] md:tracking-[0.2em] whitespace-nowrap uppercase hover:border-white hover:bg-white/10 transition-all duration-500 ease-out"
  >
  Our Expertise
  </button>
@@ -527,12 +527,12 @@ export default function Home() {
  
  
  {/* 向下滚动提示 */}
- <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center animate-bounce opacity-50">
+ <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden md:flex flex-col items-center animate-bounce opacity-50">
  <div className="text-[9px] text-white tracking-[0.3em] uppercase mb-3">Scroll</div>
  <div className="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"></div>
  </div>
 
- <div className="absolute right-6 md:right-12 bottom-12 md:bottom-14 z-30 flex items-center gap-4">
+ <div className="absolute right-5 md:right-12 bottom-5 md:bottom-14 z-30 flex items-center gap-2 md:gap-4">
  <button
  type="button"
  onClick={() => changeHeroSlide(-1)}
@@ -568,12 +568,12 @@ export default function Home() {
  </div>
 
  {/* 第二屏：Product Series 分类展示区 (Light Theme) */}
- <div className="relative w-full bg-gradient-to-b from-slate-50 to-white pt-12 pb-16 px-12 z-20 flex flex-col items-center">
- <h2 className="text-[clamp(2.5rem,5vw,4rem)] font-black font-yahei text-slate-900 mb-10 text-center tracking-tighter leading-none">
+ <div className="relative w-full bg-gradient-to-b from-slate-50 to-white pt-12 pb-16 px-6 md:px-12 z-20 flex flex-col items-center">
+ <h2 className="text-3xl md:text-[clamp(2.5rem,5vw,4rem)] font-black font-yahei text-slate-900 mb-8 md:mb-10 text-center tracking-tighter leading-none">
  Products
  </h2>
  
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full max-w-[1600px]">
+ <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 lg:gap-8 w-full max-w-[1600px]">
  {categoryCards.map((cat, idx) => (
  <div 
  key={idx} 
@@ -591,16 +591,16 @@ export default function Home() {
  <div className="absolute inset-0 bg-gradient-to-t from-[#060913]/90 via-[#060913]/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none"></div>
  
  {/* 文字内容 */}
- <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end pointer-events-none">
+ <div className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8 flex justify-between items-end gap-2 pointer-events-none">
  <div>
- <div className="text-[9px] text-red-400 tracking-[0.2em] uppercase mb-3">Series {(idx + 1).toString().padStart(2, '0')}</div>
- <h3 className="text-xl font-bold text-white tracking-wide capitalize group-hover:text-red-50 transition-colors duration-500 leading-tight">
+ <div className="text-[8px] md:text-[9px] text-red-400 tracking-[0.15em] md:tracking-[0.2em] uppercase mb-2 md:mb-3">Series {(idx + 1).toString().padStart(2, '0')}</div>
+ <h3 className="text-sm sm:text-base md:text-xl font-bold text-white tracking-normal md:tracking-wide capitalize group-hover:text-red-50 transition-colors duration-500 leading-tight">
  {cat.name}
  </h3>
  </div>
  {/* 箭头悬停特效 (改用红色基调) */}
- <div className="w-12 h-12 border border-white/20 flex items-center justify-center bg-white/10 backdrop-blur-md group-hover:bg-red-600 group-hover:border-red-600 transition-all duration-500 transform group-hover:translate-x-2">
- <svg className="w-5 h-5 text-white transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+ <div className="w-9 h-9 md:w-12 md:h-12 border border-white/20 flex items-center justify-center bg-white/10 backdrop-blur-md group-hover:bg-red-600 group-hover:border-red-600 transition-all duration-500 transform group-hover:translate-x-2 shrink-0">
+ <svg className="w-4 h-4 md:w-5 md:h-5 text-white transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
  </svg>
  </div>
@@ -612,14 +612,14 @@ export default function Home() {
  </div>
 
  {/* 第三屏：企业介绍区 (Corporate Intro) - 深色主题 */}
- <div className="relative w-full bg-[#0a0f1c] py-24 px-12 z-20 flex flex-col items-center overflow-hidden">
+ <div className="relative w-full bg-[#0a0f1c] py-16 px-6 md:py-24 md:px-12 z-20 flex flex-col items-center overflow-hidden">
  {/* 背景光晕装饰 */}
  <div className="absolute inset-0 pointer-events-none overflow-hidden">
  <div className="absolute -top-1/4 -left-1/4 w-[60%] h-[80%] bg-red-600/10 blur-[140px] "></div>
  <div className="absolute -bottom-1/4 -right-1/4 w-[50%] h-[70%] bg-blue-600/10 blur-[140px] "></div>
  </div>
 
- <div className="relative w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 items-center">
+ <div className="relative w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
  
  {/* 左侧：企业视频 */}
  <div className="w-full lg:w-[55%] relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] group border border-white/10">
@@ -641,7 +641,7 @@ export default function Home() {
  {/* 右侧：企业文案 */}
  <div className="w-full lg:w-[45%] flex flex-col items-start relative pl-0 lg:pl-10">
  <span className="text-[10px] font-bold text-red-500 tracking-[0.4em] uppercase mb-4">Who We Are</span>
- <h3 className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
+ <h3 className="text-2xl md:text-3xl font-bold text-white mb-5 md:mb-8 leading-tight">
  Handan Lanchuang Fastener<br/>Manufacturing Co., Ltd.
  </h3>
  
@@ -658,35 +658,35 @@ export default function Home() {
  </div>
 
  {/* 红色数据指标 Banner */}
- <div className="relative w-full bg-gradient-to-r from-red-700 via-red-600 to-red-700 py-16 px-12 z-20 overflow-hidden">
+ <div className="relative w-full bg-gradient-to-r from-red-700 via-red-600 to-red-700 py-10 px-6 md:py-16 md:px-12 z-20 overflow-hidden">
  {/* 装饰几何 */}
  <div className="absolute inset-0 pointer-events-none opacity-20">
  <div className="absolute -top-24 -right-24 w-96 h-96 border-[3px] border-white/30 "></div>
  <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] border-[3px] border-white/20 "></div>
  </div>
 
- <div className="relative w-full max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+ <div className="relative w-full max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-y-8 md:gap-8">
  {[
  { num: 'GB', label: 'China Standards' },
  { num: 'DIN', label: 'German Standards' },
  { num: 'ANSI', label: 'American Standards' },
  { num: 'ISO', label: 'Global Standards' },
  ].map((stat, idx) => (
- <div key={idx} className="flex flex-col items-center text-center border-r border-white/20 last:border-r-0 px-4">
- <div className="text-5xl md:text-6xl font-black text-white mb-2 tracking-tight">{stat.num}</div>
- <div className="text-[11px] text-red-100 font-bold tracking-[0.25em] uppercase">{stat.label}</div>
+ <div key={idx} className={`flex flex-col items-center text-center border-white/20 px-2 md:px-4 ${idx % 2 === 0 ? 'border-r' : ''} ${idx < 3 ? 'md:border-r' : 'md:border-r-0'}`}>
+ <div className="text-3xl sm:text-4xl md:text-6xl font-black text-white mb-2 tracking-tight">{stat.num}</div>
+ <div className="text-[9px] md:text-[11px] text-red-100 font-bold tracking-[0.15em] md:tracking-[0.25em] uppercase leading-relaxed">{stat.label}</div>
  </div>
  ))}
  </div>
  </div>
 
  {/* Our Services 卡片区 */}
- <div className="relative w-full bg-gradient-to-b from-slate-100 via-white to-slate-50 pt-14 pb-20 px-12 z-20 flex flex-col items-center">
- <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-black font-yahei text-slate-900 mb-10 text-center tracking-tighter leading-none">
+ <div className="relative w-full bg-gradient-to-b from-slate-100 via-white to-slate-50 pt-12 pb-16 md:pt-14 md:pb-20 px-6 md:px-12 z-20 flex flex-col items-center">
+ <h2 className="text-3xl md:text-[clamp(2rem,4vw,3.25rem)] font-black font-yahei text-slate-900 mb-8 md:mb-10 text-center tracking-tighter leading-none">
  Services
  </h2>
 
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-[1600px]">
+ <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-8 w-full max-w-[1600px]">
  {servicesData.map((svc, idx) => (
  <div
  key={idx}
@@ -701,14 +701,14 @@ export default function Home() {
  />
  <div className="absolute inset-0 bg-gradient-to-t from-[#060913]/90 via-[#060913]/30 to-transparent opacity-90 group-hover:opacity-80 transition-opacity duration-700 pointer-events-none"></div>
 
- <div className="absolute bottom-8 left-8 right-8 flex justify-between items-end pointer-events-none">
+ <div className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8 flex justify-between items-end gap-2 pointer-events-none">
  <div>
- <div className="text-[10px] font-bold text-red-500 tracking-[0.3em] uppercase mb-3">0{idx + 1}</div>
- <h3 className="text-white text-xl md:text-2xl font-black tracking-tight leading-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]">
+ <div className="text-[8px] md:text-[10px] font-bold text-red-500 tracking-[0.2em] md:tracking-[0.3em] uppercase mb-2 md:mb-3">0{idx + 1}</div>
+ <h3 className="text-white text-sm sm:text-base md:text-2xl font-black tracking-tight leading-tight drop-shadow-[0_4px_10px_rgba(0,0,0,0.4)]">
  {svc.title}
  </h3>
  </div>
- <div className="w-10 h-10 border border-white/60 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-500">
+ <div className="w-9 h-9 md:w-10 md:h-10 border border-white/60 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-500">
  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
  </svg>
@@ -721,26 +721,26 @@ export default function Home() {
  </div>
 
  {/* 第六屏：Usage Scenarios (6 张图一列 + 点击放大预览) */}
- <div className="relative w-full bg-gradient-to-b from-slate-50 to-white py-20 px-12 z-20 flex flex-col items-center">
+ <div className="relative w-full bg-gradient-to-b from-slate-50 to-white py-16 px-6 md:py-20 md:px-12 z-20 flex flex-col items-center">
  {/* 居中标题 */}
- <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-black font-yahei text-slate-900 text-center tracking-tighter leading-none mb-4">
+ <h2 className="text-3xl md:text-[clamp(2rem,4vw,3.25rem)] font-black font-yahei text-slate-900 text-center tracking-tighter leading-tight md:leading-none mb-4">
  Industry Applications
  </h2>
- <p className="text-slate-500 text-sm md:text-base text-center max-w-2xl mb-12 font-medium">
+ <p className="text-slate-500 text-sm md:text-base text-center max-w-2xl mb-8 md:mb-12 font-medium leading-relaxed">
  Fastener solutions for demanding projects, with standard and customized production support.
  </p>
 
  {/* 主显示区：左侧 6 张缩略图（同一列）+ 右侧放大预览 */}
- <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-8 items-stretch">
+ <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-4 lg:gap-8 items-stretch">
  {/* 左侧：缩略图列表 (桌面端整列高度与右侧预览一致) */}
- <div className="w-full lg:w-[220px] shrink-0 flex lg:flex-col gap-3 lg:h-[520px] overflow-x-auto lg:overflow-visible">
+ <div className="w-full lg:w-[220px] shrink-0 grid grid-cols-3 sm:grid-cols-6 lg:flex lg:flex-col gap-2 sm:gap-3 lg:h-[520px]">
  {scenariosData.map((scenario, idx) => {
  const isActive = activeScenario === idx;
  return (
  <div
  key={idx}
  onClick={() => setActiveScenario(idx)}
- className={`relative shrink-0 w-[150px] h-[90px] lg:w-full lg:h-auto lg:flex-1 cursor-pointer overflow-hidden border-2 transition-all duration-300 ${isActive ? 'border-red-600 shadow-[0_10px_20px_rgba(220,38,38,0.25)] scale-[1.02]' : 'border-transparent hover:border-red-300 opacity-70 hover:opacity-100'}`}
+ className={`relative w-full h-[72px] sm:h-[80px] lg:h-auto lg:flex-1 cursor-pointer overflow-hidden border-2 transition-all duration-300 ${isActive ? 'border-red-600 shadow-[0_10px_20px_rgba(220,38,38,0.25)] scale-[1.02]' : 'border-transparent hover:border-red-300 opacity-70 hover:opacity-100'}`}
  >
  <img src={scenario.bgImg} alt={scenario.title} className="w-full h-full object-cover" />
  <div className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ${isActive ? 'opacity-0' : 'opacity-100'}`}></div>
@@ -751,7 +751,7 @@ export default function Home() {
  </div>
 
  {/* 右侧：放大预览 */}
- <div className="flex-1 relative h-[420px] md:h-[520px] overflow-hidden bg-black">
+ <div className="w-full flex-none lg:flex-1 relative h-[240px] sm:h-[360px] lg:h-[520px] overflow-hidden bg-black">
  {scenariosData.map((scenario, idx) => (
  <div
  key={idx}
@@ -765,19 +765,19 @@ export default function Home() {
  </div>
 
  {/* 第七屏：Contact Us (询盘与联系我们) */}
- <div className="relative w-full bg-gradient-to-b from-slate-50 to-white py-24 px-12 z-20 flex flex-col items-center">
- <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24">
+ <div className="relative w-full bg-gradient-to-b from-slate-50 to-white py-16 px-6 md:py-24 md:px-12 z-20 flex flex-col items-center">
+ <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24">
  
  {/* 左侧：联系信息与标语 */}
  <div className="w-full lg:w-[40%] flex flex-col items-start justify-center">
- <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-8 tracking-tight leading-tight">
+ <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-5 md:mb-8 tracking-tight leading-tight">
  Let&apos;s Start a Conversation
  </h2>
- <p className="text-slate-600 leading-relaxed mb-12 text-sm md:text-base font-medium max-w-md">
+ <p className="text-slate-600 leading-relaxed mb-8 md:mb-12 text-sm md:text-base font-medium max-w-md">
  Tell us the product standard, size, finish, quantity or drawing requirements. Our team will help you develop the right standard or OEM fastener solution.
  </p>
 
- <div className="flex flex-col gap-8 w-full">
+ <div className="flex flex-col gap-6 md:gap-8 w-full">
  {/* Email */}
  <div className="flex items-start gap-6 group cursor-pointer">
  <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
@@ -827,11 +827,11 @@ export default function Home() {
  {/* 背景装饰框 */}
  <div className="absolute inset-0 bg-slate-100 transform translate-x-4 translate-y-4 -z-10"></div>
  
- <div className="bg-white p-10 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-slate-100 relative overflow-hidden group">
+ <div className="bg-white p-6 sm:p-8 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-slate-100 relative overflow-hidden group">
  {/* 顶角红色滑动装饰线 */}
  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 to-red-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out"></div>
  
- <h3 className="text-2xl font-bold text-slate-900 mb-10">Send an Inquiry</h3>
+ <h3 className="text-2xl font-bold text-slate-900 mb-8 md:mb-10">Send an Inquiry</h3>
  
  <form className="flex flex-col gap-6">
  {/* 姓名与邮箱 */}
@@ -889,11 +889,11 @@ export default function Home() {
  <div className="scroll-content w-full relative h-max flex-none min-h-screen flex flex-col">
  
  {/* 顶部 Banner */}
- <div className="relative w-full h-[45vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-24">
+ <div className="relative w-full h-[34vh] min-h-[240px] md:h-[45vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/40 z-10"></div>
  <img src="/img/lanchuang/factory-1.jpg" alt="Fastener production facility" className="absolute inset-0 w-full h-full object-cover opacity-60" />
- <div className="relative z-20 text-center px-12">
- <h1 className="text-5xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
+ <div className="relative z-20 text-center px-6 md:px-12">
+ <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  Products
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
@@ -901,19 +901,19 @@ export default function Home() {
  </div>
 
  {/* 核心内容区：左侧分类侧边栏 + 右侧产品网格 */}
- <div className="w-full max-w-[1700px] mx-auto px-8 py-20 flex flex-col lg:flex-row gap-8 flex-1">
+ <div className="w-full max-w-[1700px] mx-auto px-6 md:px-8 py-14 md:py-20 flex flex-col lg:flex-row gap-8 flex-1">
  
  {/* 左侧：分类侧边栏 */}
  <div className="w-full lg:w-[200px] shrink-0">
- <div className="sticky top-40 bg-white shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-slate-100 p-5">
+ <div className="lg:sticky lg:top-40 bg-white shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-slate-100 p-4 lg:p-5">
  <h3 className="text-xs font-black text-slate-900 mb-4 uppercase tracking-widest border-b border-slate-100 pb-4 flex items-center gap-2">
  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" /></svg>
  Categories
  </h3>
- <ul className="flex flex-col gap-2">
+ <ul className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
  <li
  onClick={() => setActiveCategory('All')}
- className={`px-3 py-3 cursor-pointer font-bold text-[12px] transition-all duration-300 flex items-center justify-between group ${activeCategory === 'All' ? 'bg-red-600 text-white shadow-[0_8px_20px_rgba(220,38,38,0.25)]' : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}`}
+ className={`shrink-0 min-w-max px-4 lg:px-3 py-3 cursor-pointer font-bold text-[12px] transition-all duration-300 flex items-center justify-between gap-3 group ${activeCategory === 'All' ? 'bg-red-600 text-white shadow-[0_8px_20px_rgba(220,38,38,0.25)]' : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}`}
  >
  <span>All Products</span>
  <span className={`transform transition-transform duration-300 shrink-0 ${activeCategory === 'All' ? 'translate-x-0' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`}>&rsaquo;</span>
@@ -922,7 +922,7 @@ export default function Home() {
  <li 
  key={idx}
  onClick={() => setActiveCategory(cat as string)}
- className={`px-3 py-3 cursor-pointer font-bold text-[12px] transition-all duration-300 flex items-center justify-between group ${activeCategory === cat ? 'bg-red-600 text-white shadow-[0_8px_20px_rgba(220,38,38,0.25)]' : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}`}
+ className={`shrink-0 min-w-max px-4 lg:px-3 py-3 cursor-pointer font-bold text-[12px] transition-all duration-300 flex items-center justify-between gap-3 group ${activeCategory === cat ? 'bg-red-600 text-white shadow-[0_8px_20px_rgba(220,38,38,0.25)]' : 'text-slate-600 hover:bg-red-50 hover:text-red-600'}`}
  >
  <span className="capitalize line-clamp-1">{cat as string}</span>
  <span className={`transform transition-transform duration-300 shrink-0 ${activeCategory === cat ? 'translate-x-0' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`}>&rsaquo;</span>
@@ -933,7 +933,7 @@ export default function Home() {
  </div>
 
  {/* 右侧：产品展示网格 */}
- <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 self-start">
+ <div className="flex-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-8 self-start">
  {filteredProducts.map((prod, idx: number) => (
  <div 
  key={idx} 
@@ -942,14 +942,14 @@ export default function Home() {
  >
  
  {/* 产品图区 */}
- <div className="w-full aspect-square bg-slate-50 relative overflow-hidden p-8 flex items-center justify-center">
+ <div className="w-full aspect-square bg-slate-50 relative overflow-hidden p-4 md:p-8 flex items-center justify-center">
  <img src={prod.Thumbnail || 'https://via.placeholder.com/400?text=No+Image'} className="w-full h-full object-contain mix-blend-multiply" alt={prod['Product Name']} />
  </div>
 
  {/* 产品信息区 */}
- <div className="px-7 py-6 flex flex-col">
- <div className="text-[10px] text-red-500 font-bold uppercase tracking-widest mb-3">{prod.Category}</div>
- <h3 className="text-lg font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors line-clamp-2 min-h-[2.6em]">
+ <div className="px-4 py-4 md:px-7 md:py-6 flex flex-col">
+ <div className="text-[8px] md:text-[10px] text-red-500 font-bold uppercase tracking-widest mb-2 md:mb-3">{prod.Category}</div>
+ <h3 className="text-sm md:text-lg font-bold text-slate-900 leading-snug group-hover:text-red-600 transition-colors line-clamp-2 min-h-[2.6em]">
  {prod['Product Name']}
  </h3>
  </div>
@@ -982,8 +982,8 @@ export default function Home() {
  {selectedProduct && (
  <>
  {/* 顶部面包屑 */}
- <div className="w-full max-w-[1400px] mx-auto px-12 pt-32 pb-6">
- <div className="flex items-center gap-3 text-[11px] font-bold text-slate-500 tracking-[0.15em] uppercase">
+ <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 pt-[104px] md:pt-32 pb-6">
+ <div className="flex flex-wrap items-center gap-2 md:gap-3 text-[10px] md:text-[11px] font-bold text-slate-500 tracking-[0.1em] md:tracking-[0.15em] uppercase">
  <span className="cursor-pointer hover:text-red-600 transition-colors" onClick={() => transitionTo('home')}>Home</span>
  <span className="text-slate-300">/</span>
  <span className="cursor-pointer hover:text-red-600 transition-colors" onClick={() => { setActiveCategory(selectedProduct.Category); transitionTo('products'); }}>Products</span>
@@ -993,10 +993,10 @@ export default function Home() {
  </div>
 
  {/* 主体三栏区 */}
- <div className="w-full max-w-[1400px] mx-auto px-12 pb-12 flex flex-col lg:flex-row gap-10">
+ <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-12 flex flex-col lg:flex-row gap-6 lg:gap-10">
 
  {/* 左侧：分类列表 + 联系方式 */}
- <aside className="w-full lg:w-[230px] shrink-0 flex flex-col gap-8">
+ <aside className="hidden lg:flex w-full lg:w-[230px] shrink-0 flex-col gap-8">
  {/* PRODUCT CENTER */}
  <div className="bg-white border border-slate-200">
  <div className="flex items-center justify-center gap-2 py-4 border-b border-slate-200">
@@ -1044,7 +1044,7 @@ export default function Home() {
 
  {/* 中间：产品主图 */}
  <div className="flex-1 min-w-0">
- <div className="bg-white border border-slate-200 p-6">
+ <div className="bg-white border border-slate-200 p-4 md:p-6">
  <div className="w-full aspect-square bg-slate-50 overflow-hidden flex items-center justify-center">
  <img
  src={selectedProduct.Thumbnail || '/img/lanchuang/factory-1.jpg'}
@@ -1093,7 +1093,7 @@ export default function Home() {
  </div>
 
  {/* 下方：产品详情描述 */}
- <div className="w-full max-w-[1400px] mx-auto px-12 pb-24">
+ <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-16 md:pb-24">
  <div className="flex items-center gap-3 mb-6 border-b border-slate-200 pb-4">
  <div className="w-1 h-6 bg-red-600"></div>
  <h2 className="text-lg font-bold text-slate-900">Product Description</h2>
@@ -1124,7 +1124,7 @@ export default function Home() {
  {selectedServiceDetail && (
  <>
  {/* 顶部 Banner */}
- <div className="relative w-full h-[60vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-24">
+ <div className="relative w-full h-[46vh] min-h-[360px] md:h-[60vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-[#0a0f1c] z-10"></div>
  <img
  src={selectedServiceDetail.img}
@@ -1132,8 +1132,8 @@ export default function Home() {
  className="absolute inset-0 w-full h-full object-cover opacity-50 blur-sm scale-105"
  />
 
- <div className="relative z-20 w-full max-w-[1400px] mx-auto px-12 flex flex-col items-center text-center mt-12">
- <div className="flex items-center gap-3 text-[10px] font-bold text-slate-300 tracking-[0.2em] uppercase mb-8">
+ <div className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center text-center mt-4 md:mt-12">
+ <div className="flex flex-wrap justify-center items-center gap-2 md:gap-3 text-[9px] md:text-[10px] font-bold text-slate-300 tracking-[0.12em] md:tracking-[0.2em] uppercase mb-5 md:mb-8">
  <span className="cursor-pointer hover:text-white transition-colors" onClick={() => transitionTo('home')}>Home</span>
  <span className="text-red-500">/</span>
  <span className="text-white">Our Services</span>
@@ -1142,7 +1142,7 @@ export default function Home() {
  </div>
 
  <span className="text-red-500 font-bold tracking-[0.3em] uppercase text-xs mb-6 block">{selectedServiceDetail.tagline}</span>
- <h1 className="text-4xl md:text-6xl font-black font-yahei text-white mb-6 tracking-tight max-w-4xl leading-tight drop-shadow-2xl">
+ <h1 className="text-3xl md:text-6xl font-black font-yahei text-white mb-6 tracking-tight max-w-4xl leading-tight drop-shadow-2xl">
  {selectedServiceDetail.title}.
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
@@ -1150,8 +1150,8 @@ export default function Home() {
  </div>
 
  {/* 内容区：左图 + 右文案 */}
- <div className="w-full bg-white py-32 px-12 relative z-20">
- <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 items-center">
+ <div className="w-full bg-white py-16 px-6 md:py-32 md:px-12 relative z-20">
+ <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
  <div className="w-full lg:w-1/2 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
  <img
  src={selectedServiceDetail.img}
@@ -1161,22 +1161,22 @@ export default function Home() {
  </div>
  <div className="w-full lg:w-1/2 flex flex-col items-start lg:pl-8">
  <span className="text-xs font-bold text-red-600 tracking-[0.3em] uppercase mb-4">0{selectedServiceDetail.index + 1} — Our Service</span>
- <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-8 leading-tight tracking-tighter">
+ <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 md:mb-8 leading-tight tracking-tighter">
  {selectedServiceDetail.title}
  </h2>
- <p className="text-slate-600 leading-relaxed text-base mb-12 font-medium">
+ <p className="text-slate-600 leading-relaxed text-base mb-8 md:mb-12 font-medium">
  {selectedServiceDetail.desc}
  </p>
- <div className="flex items-center gap-4">
+ <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 sm:gap-4">
  <button
  onClick={() => transitionTo('contact')}
- className="bg-red-600 text-white px-8 py-4 font-bold text-xs tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.3)] hover:-translate-y-1 transition-all duration-300"
+ className="w-full sm:w-auto bg-red-600 text-white px-8 py-4 font-bold text-xs tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.3)] hover:-translate-y-1 transition-all duration-300"
  >
  GET IN TOUCH
  </button>
  <button
  onClick={() => transitionTo('home')}
- className="bg-slate-100 text-slate-900 border border-slate-200 px-8 py-4 font-bold text-xs tracking-widest hover:bg-slate-200 transition-all duration-300"
+ className="w-full sm:w-auto bg-slate-100 text-slate-900 border border-slate-200 px-8 py-4 font-bold text-xs tracking-widest hover:bg-slate-200 transition-all duration-300"
  >
  BACK TO HOME
  </button>
@@ -1199,11 +1199,11 @@ export default function Home() {
  <div className="scroll-content w-full relative h-max flex-none min-h-screen flex flex-col">
  
  {/* About 顶部 Banner */}
- <div className="relative w-full h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-24">
+ <div className="relative w-full h-[34vh] min-h-[240px] md:h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/50 z-10"></div>
  <img src="/img/lanchuang/factory-1.jpg" alt="Handan Lanchuang factory" className="absolute inset-0 w-full h-full object-cover opacity-60" />
- <div className="relative z-20 text-center px-12">
- <h1 className="text-5xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
+ <div className="relative z-20 text-center px-6 md:px-12">
+ <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  About Us
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
@@ -1211,8 +1211,8 @@ export default function Home() {
  </div>
 
  {/* 企业介绍模块 */}
- <div className="w-full bg-white py-32 px-12 relative z-20">
- <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 items-center">
+ <div className="w-full bg-white py-16 px-6 md:py-32 md:px-12 relative z-20">
+ <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
  {/* 左侧：企业大楼/生产基地展示 */}
  <div className="w-full lg:w-1/2 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
  <img src="/img/lanchuang/factory-2.jpg" alt="Handan Lanchuang production equipment" className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
@@ -1221,10 +1221,10 @@ export default function Home() {
  {/* 右侧：详细介绍与数据统计 */}
  <div className="w-full lg:w-1/2 flex flex-col items-start lg:pl-8">
  <span className="text-xs font-bold text-red-600 tracking-[0.3em] uppercase mb-4"></span>
- <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8 leading-tight tracking-tighter">
+ <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6 md:mb-8 leading-tight tracking-tighter">
  Handan Lanchuang Fastener<br/>Manufacturing Co., Ltd.
  </h2>
- <div className="text-slate-600 leading-relaxed mb-12 text-sm md:text-base font-medium flex flex-col gap-4">
+ <div className="text-slate-600 leading-relaxed mb-4 md:mb-12 text-sm md:text-base font-medium flex flex-col gap-4">
  <p>
  Handan Lanchuang Fastener Manufacturing Co., Ltd. is a professional manufacturer and supplier of high-quality fasteners, located in Yongnian District, Handan City, Hebei Province, well known as China&apos;s largest fastener industrial cluster.
  </p>
@@ -1241,9 +1241,9 @@ export default function Home() {
  </div>
 
  {/* CTA / Join Us 区域 - 左右双栏 */}
- <div className="w-full bg-gradient-to-br from-slate-900 via-[#0a0f1c] to-slate-900 px-12 border-t border-slate-800 relative overflow-hidden">
+ <div className="w-full bg-gradient-to-br from-slate-900 via-[#0a0f1c] to-slate-900 py-16 px-6 md:py-24 md:px-12 border-t border-slate-800 relative overflow-hidden">
  <div className="absolute top-0 right-0 w-[40%] h-full bg-red-600/5 blur-[120px] pointer-events-none"></div>
- <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 items-center relative z-10">
+ <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-center relative z-10">
  {/* 左侧：文案 + CTA */}
  <div className="w-full lg:w-1/2 flex flex-col items-center text-center">
  <div className="w-14 h-14 bg-white/10 backdrop-blur-md flex items-center justify-center mb-6 shadow-[0_10px_30px_rgba(0,0,0,0.2)] border border-white/10">
@@ -1285,11 +1285,11 @@ export default function Home() {
  <div className="scroll-content w-full relative h-max flex-none min-h-screen flex flex-col">
  
  {/* Services 顶部 Banner */}
- <div className="relative w-full h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-24">
+ <div className="relative w-full h-[34vh] min-h-[240px] md:h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/50 z-10"></div>
  <img src="/img/lanchuang/factory-2.jpg" alt="Fastener manufacturing services" className="absolute inset-0 w-full h-full object-cover opacity-60" />
- <div className="relative z-20 text-center px-12">
- <h1 className="text-5xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
+ <div className="relative z-20 text-center px-6 md:px-12">
+ <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  Services
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
@@ -1297,9 +1297,9 @@ export default function Home() {
  </div>
 
  {/* 核心服务区域 (交替布局) */}
- <div className="w-full max-w-[1400px] mx-auto px-12 py-32 flex flex-col gap-32">
+ <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 py-16 md:py-32 flex flex-col gap-16 md:gap-32">
  {servicesData.map((svc, idx) => (
- <div key={idx} className={`flex flex-col lg:flex-row gap-16 items-center ${idx % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+ <div key={idx} className={`flex flex-col lg:flex-row gap-8 lg:gap-16 items-center ${idx % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
  {/* 图片 */}
  <div className="w-full lg:w-1/2 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
  <div className="absolute inset-0 bg-red-600/10 mix-blend-overlay group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none"></div>
@@ -1307,14 +1307,14 @@ export default function Home() {
  </div>
  {/* 内容 */}
  <div className="w-full lg:w-1/2 flex flex-col items-start">
- <div className="w-16 h-16 bg-red-50 flex items-center justify-center text-red-600 mb-8 border border-red-100 shadow-sm">
+ <div className="w-14 h-14 md:w-16 md:h-16 bg-red-50 flex items-center justify-center text-red-600 mb-6 md:mb-8 border border-red-100 shadow-sm">
  {svc.icon}
  </div>
  <div className="text-[10px] text-red-500 font-bold tracking-[0.3em] uppercase mb-4">Service {String(idx + 1).padStart(2, '0')}</div>
  <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6 leading-tight">
  {svc.title}
  </h2>
- <p className="text-slate-600 leading-relaxed text-base mb-10 max-w-lg">
+ <p className="text-slate-600 leading-relaxed text-sm md:text-base mb-8 md:mb-10 max-w-lg">
  {svc.desc}
  <br/><br/>
  Share your required standard, dimensions, material, finish, quantity or drawings, and our team will review the most suitable production solution for your order.
@@ -1331,35 +1331,35 @@ export default function Home() {
  </div>
 
  {/* 质保与承诺模块 */}
- <div className="w-full bg-[#0a0f1c] py-32 px-12 relative overflow-hidden">
+ <div className="w-full bg-[#0a0f1c] py-16 px-6 md:py-32 md:px-12 relative overflow-hidden">
  <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
  <div className="absolute -top-[50%] -right-[10%] w-[70%] h-[150%] bg-red-600/5 blur-[120px] "></div>
  </div>
  
- <div className="w-full max-w-[1400px] mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-16">
+ <div className="w-full max-w-[1400px] mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16">
  <div className="w-full md:w-1/2">
- <h2 className="text-4xl md:text-5xl font-black text-white mb-8 leading-tight">Our Commitment - Reliable Fastener Supply</h2>
+ <h2 className="text-3xl md:text-5xl font-black text-white mb-6 md:mb-8 leading-tight">Our Commitment - Reliable Fastener Supply</h2>
  <p className="text-slate-400 leading-relaxed mb-10">
  Every order is supported by controlled production, dimensional consistency and quality inspection, with efficient communication from quotation through delivery.
  </p>
- <div className="grid grid-cols-2 gap-8">
+ <div className="grid grid-cols-2 gap-4 md:gap-8">
  <div>
- <div className="text-4xl font-black text-white mb-2">GB<span className="text-red-500"> / DIN</span></div>
+ <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2">GB<span className="text-red-500"> / DIN</span></div>
  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Standard Production</div>
  </div>
  <div>
- <div className="text-4xl font-black text-white mb-2">ANSI<span className="text-red-500"> / ISO</span></div>
+ <div className="text-2xl sm:text-3xl md:text-4xl font-black text-white mb-2">ANSI<span className="text-red-500"> / ISO</span></div>
  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">International Supply</div>
  </div>
  </div>
  </div>
  <div className="w-full md:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-6">
- <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 hover:bg-white/10 transition-colors">
+ <div className="bg-white/5 backdrop-blur-md border border-white/10 p-6 md:p-8 hover:bg-white/10 transition-colors">
  <svg className="w-8 h-8 text-red-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
  <h4 className="text-white font-bold mb-2">Quality Control</h4>
  <p className="text-slate-400 text-sm">Consistent dimensions and stable batch performance.</p>
  </div>
- <div className="bg-white/5 backdrop-blur-md border border-white/10 p-8 hover:bg-white/10 transition-colors sm:mt-8">
+ <div className="bg-white/5 backdrop-blur-md border border-white/10 p-6 md:p-8 hover:bg-white/10 transition-colors sm:mt-8">
  <svg className="w-8 h-8 text-red-500 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
  <h4 className="text-white font-bold mb-2">OEM Capability</h4>
  <p className="text-slate-400 text-sm">Customized metal components made to project needs.</p>
@@ -1381,11 +1381,11 @@ export default function Home() {
  <div className="scroll-content w-full relative h-max flex-none min-h-screen flex flex-col">
  
  {/* Contact 顶部 Banner */}
- <div className="relative w-full h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-24">
+ <div className="relative w-full h-[34vh] min-h-[240px] md:h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/60 z-10"></div>
  <img src="/img/lanchuang/factory-2.jpg" alt="Contact Handan Lanchuang" className="absolute inset-0 w-full h-full object-cover opacity-60" />
- <div className="relative z-20 text-center px-12">
- <h1 className="text-5xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
+ <div className="relative z-20 text-center px-6 md:px-12">
+ <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  Contact Us
  </h1>
  <div className="w-20 h-1 bg-red-600 mx-auto "></div>
@@ -1393,19 +1393,19 @@ export default function Home() {
  </div>
 
  {/* 联系表单与信息区 (与首页一致的高级表单交互) */}
- <div className="relative w-full bg-white py-32 px-12 z-20 flex flex-col items-center">
- <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24">
+ <div className="relative w-full bg-white py-16 px-6 md:py-32 md:px-12 z-20 flex flex-col items-center">
+ <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24">
  
  {/* 左侧：联系信息与标语 */}
  <div className="w-full lg:w-[40%] flex flex-col items-start justify-center">
- <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-8 tracking-tight leading-tight">
+ <h2 className="text-2xl md:text-3xl font-black font-yahei text-slate-900 mb-5 md:mb-8 tracking-tight leading-tight">
  Let&apos;s Start a Conversation
  </h2>
- <p className="text-slate-600 leading-relaxed mb-12 text-sm md:text-base font-medium max-w-md">
+ <p className="text-slate-600 leading-relaxed mb-8 md:mb-12 text-sm md:text-base font-medium max-w-md">
  Tell us the product standard, size, finish, quantity or drawing requirements. Our team will help you develop the right standard or OEM fastener solution.
  </p>
 
- <div className="flex flex-col gap-8 w-full">
+ <div className="flex flex-col gap-6 md:gap-8 w-full">
  {/* Email */}
  <div className="flex items-start gap-6 group cursor-pointer">
  <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
@@ -1454,11 +1454,11 @@ export default function Home() {
  {/* 背景装饰框 */}
  <div className="absolute inset-0 bg-slate-100 transform translate-x-4 translate-y-4 -z-10"></div>
  
- <div className="bg-white p-10 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-slate-100 relative overflow-hidden group">
+ <div className="bg-white p-6 sm:p-8 md:p-14 shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-slate-100 relative overflow-hidden group">
  {/* 顶角红色滑动装饰线 */}
  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 to-red-400 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-700 ease-out"></div>
  
- <h3 className="text-2xl font-bold text-slate-900 mb-10">Send an Inquiry</h3>
+ <h3 className="text-2xl font-bold text-slate-900 mb-8 md:mb-10">Send an Inquiry</h3>
  
  <form className="flex flex-col gap-6">
  {/* 姓名与邮箱 */}
