@@ -13,6 +13,17 @@ type Product = {
  'Description HTML': string;
 };
 
+type ManagedContent = {
+ site: { name: string; logo: string; email: string };
+ categories: { id: string; name: string; image: string }[];
+ products: { id: string; categoryId: string; name: string; thumbnail: string; descriptionHtml: string }[];
+ contacts: { id: string; name: string; displayNumber: string; whatsappNumber: string }[];
+ socials: { id: string; label: string; url: string }[];
+ images: { id: string; group: string; label: string; url: string }[];
+};
+
+type WhatsAppContact = { id?: string; name: string; displayNumber: string; whatsappNumber: string };
+
 type Service = {
  title: string;
  tagline: string;
@@ -36,14 +47,6 @@ const categoryCards = categories.map((cat) => ({
  image: products.find((product) => product.Category === cat)?.Thumbnail || '/img/lanchuang/factory-1.jpg',
 }));
 
-const whatsappContacts = [
- { name: 'White Cheng', displayNumber: '+86 133 3310 5125', whatsappNumber: '8613333105125' },
- { name: 'Ava', displayNumber: '+86 177 3100 7148', whatsappNumber: '8617731007148' },
- { name: 'Flynn', displayNumber: '+86 152 3209 0227', whatsappNumber: '8615232090227' },
-];
-
-const contactEmail = 'info@handanbolt.com';
-
 const socialLinks = [
  { id: 'facebook', label: 'Facebook', href: '' },
  { id: 'instagram', label: 'Instagram', href: '' },
@@ -52,7 +55,7 @@ const socialLinks = [
  { id: 'linkedin', label: 'LinkedIn', href: '' },
 ] as const;
 
-function SocialIcon({ id }: { id: (typeof socialLinks)[number]['id'] }) {
+function SocialIcon({ id }: { id: string }) {
  const paths = {
  facebook: 'M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.438H7.078v-3.489h3.047V9.413c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.974h-1.513c-1.491 0-1.956.931-1.956 1.887v2.26h3.328l-.532 3.489h-2.796V24C19.612 23.094 24 18.1 24 12.073z',
  instagram: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z',
@@ -87,15 +90,23 @@ function SocialIcon({ id }: { id: (typeof socialLinks)[number]['id'] }) {
  );
  }
 
- const brandColors = {
+ const brandColors: Record<string, string> = {
  facebook: '#1877F2',
  youtube: '#FF0000',
  linkedin: '#0A66C2',
  } as const;
 
+ if (!(id in paths)) {
+ return (
+ <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+ <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
+ </svg>
+ );
+ }
+
  return (
  <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
- <path d={paths[id]} fill={brandColors[id]} />
+ <path d={paths[id as keyof typeof paths]} fill={brandColors[id] || '#64748b'} />
  </svg>
  );
 }
@@ -143,10 +154,10 @@ function LanguageSwitcher({ locale, onChange }: { locale: Locale; onChange: (loc
  );
 }
 
-function ContactMethods({ locale }: { locale: Locale }) {
+function ContactMethods({ locale, contacts, email }: { locale: Locale; contacts: WhatsAppContact[]; email: string }) {
  return (
  <>
- {whatsappContacts.map((contact) => (
+ {contacts.map((contact) => (
  <a
  key={contact.whatsappNumber}
  href={`https://wa.me/${contact.whatsappNumber}`}
@@ -164,42 +175,16 @@ function ContactMethods({ locale }: { locale: Locale }) {
  </span>
  </a>
  ))}
- <a href={`mailto:${contactEmail}`} className="flex items-start gap-6 group" aria-label={`Email ${contactEmail}`}>
+ <a href={`mailto:${email}`} className="flex items-start gap-6 group" aria-label={`Email ${email}`}>
  <span className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-600 group-hover:bg-red-600 group-hover:border-red-600 group-hover:text-white transition-colors duration-300 shrink-0 shadow-sm">
  <EmailIcon />
  </span>
  <span>
  <span className="block text-[10px] text-slate-400 font-bold tracking-widest uppercase mb-1 group-hover:text-red-600 transition-colors">{translate(locale, 'Email')}</span>
- <span className="block text-base sm:text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors break-all">{contactEmail}</span>
+ <span className="block text-base sm:text-lg font-bold text-slate-900 group-hover:text-red-600 transition-colors break-all">{email}</span>
  </span>
  </a>
  </>
- );
-}
-
-function WhatsAppFloatingButtons({ locale }: { locale: Locale }) {
- return (
- <aside className="fixed right-3 bottom-3 md:right-6 md:bottom-6 z-[1200] flex flex-col items-end gap-2" aria-label={translate(locale, 'WhatsApp customer service')}>
- {whatsappContacts.map((contact) => (
- <a
- key={contact.whatsappNumber}
- href={`https://wa.me/${contact.whatsappNumber}`}
- target="_blank"
- rel="noopener noreferrer"
- title={`WhatsApp · ${contact.name} · ${contact.displayNumber}`}
- aria-label={`${translate(locale, 'Chat with')} ${contact.name} ${translate(locale, 'on WhatsApp at')} ${contact.displayNumber}`}
- className="group flex h-12 w-12 md:h-14 md:w-[230px] items-center overflow-hidden border border-slate-200 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.16)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[#25D366] hover:shadow-[0_12px_30px_rgba(18,140,74,0.22)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/30"
- >
- <span className="flex h-full w-full md:w-14 shrink-0 items-center justify-center bg-[#25D366] text-white">
- <WhatsAppIcon className="w-6 h-6" />
- </span>
- <span className="hidden min-w-0 px-3 text-left md:block">
- <span className="block truncate text-[9px] font-bold uppercase tracking-[0.14em] text-[#128c4a]">WhatsApp · {contact.name}</span>
- <span className="mt-0.5 block whitespace-nowrap text-[12px] font-black text-slate-900">{contact.displayNumber}</span>
- </span>
- </a>
- ))}
- </aside>
  );
 }
 
@@ -311,6 +296,7 @@ const heroSlides = [
 ];
 
 export default function Home() {
+ const [managedContent, setManagedContent] = useState<ManagedContent | null>(null);
  const [locale, setLocale] = useState<Locale>('en');
  const [currentId, setCurrentId] = useState('home');
  const [activeScenario, setActiveScenario] = useState(0);
@@ -327,6 +313,44 @@ export default function Home() {
  const transitionToRef = useRef<((id: string, skip?: boolean) => void) | null>(null);
  const localeInitializedRef = useRef(false);
  const t = useCallback((source: string) => translate(locale, source), [locale]);
+
+ useEffect(() => {
+ let active = true;
+ fetch('/api/content', { cache: 'no-store' })
+ .then((response) => response.ok ? response.json() : Promise.reject(new Error('Content request failed')))
+ .then((nextContent: ManagedContent) => { if (active) setManagedContent(nextContent); })
+ .catch(() => { /* Keep the bundled content available if the API is temporarily unavailable. */ });
+ return () => { active = false; };
+ }, []);
+
+ const categoryRecords = managedContent?.categories ?? categoryCards.map((category, index) => ({ id: `fallback-${index}`, name: category.name, image: category.image }));
+ const categories = categoryRecords.map((category) => category.name);
+ const products: Product[] = managedContent
+ ? managedContent.products.map((product) => ({
+ Category: categoryRecords.find((category) => category.id === product.categoryId)?.name || categories[0] || 'Other',
+ 'Product Name': product.name,
+ Thumbnail: product.thumbnail,
+ 'Description HTML': product.descriptionHtml,
+ }))
+ : rawProducts.slice().sort((firstProduct, secondProduct) => categoryOrder.indexOf(firstProduct.Category) - categoryOrder.indexOf(secondProduct.Category));
+ const categoryCardsManaged = categoryRecords.map((category) => ({ name: category.name, image: category.image || products.find((product) => product.Category === category.name)?.Thumbnail || '/img/lanchuang/factory-1.jpg' }));
+ const whatsappContacts = managedContent?.contacts ?? [
+ { id: 'white-cheng', name: 'White Cheng', displayNumber: '+86 133 3310 5125', whatsappNumber: '8613333105125' },
+ { id: 'ava', name: 'Ava', displayNumber: '+86 177 3100 7148', whatsappNumber: '8617731007148' },
+ { id: 'flynn', name: 'Flynn', displayNumber: '+86 152 3209 0227', whatsappNumber: '8615232090227' },
+ ];
+ const contactEmail = managedContent?.site.email || 'info@handanbolt.com';
+ const siteLogo = managedContent?.site.logo || '/img/lanchuang/logo.jpg?v=20260728-1';
+ const siteName = managedContent?.site.name || 'Lan Chuang Fasteners';
+ const managedSocialLinks = (managedContent?.socials ?? socialLinks.map((social) => ({ ...social, url: social.href }))).map((social) => ({ id: social.id, label: social.label, href: social.url }));
+ const imageFor = (id: string, fallback: string) => managedContent?.images.find((image) => image.id === id)?.url || fallback;
+ const managedServicesData = servicesData.map((service, index) => ({ ...service, img: imageFor(`home.service.${index + 1}`, service.img) }));
+ const managedScenariosData = scenariosData.map((scenario, index) => ({ ...scenario, bgImg: imageFor(`home.application.${index + 1}`, scenario.bgImg) }));
+ const managedHeroSlides = heroSlides.map((slide, index) => ({ ...slide, src: imageFor(`home.hero.${index + 1}`, slide.src) }));
+
+ useEffect(() => {
+ document.title = siteName;
+ }, [siteName]);
 
  useEffect(() => {
  let nextLocale = locale;
@@ -351,14 +375,14 @@ export default function Home() {
  if (heroPaused || reducedMotion) return;
 
  const timer = window.setInterval(() => {
- setActiveHeroSlide((slide) => (slide + 1) % heroSlides.length);
+ setActiveHeroSlide((slide) => (slide + 1) % managedHeroSlides.length);
  }, 6000);
 
  return () => window.clearInterval(timer);
- }, [heroPaused]);
+ }, [heroPaused, managedHeroSlides.length]);
 
  const changeHeroSlide = (direction: number) => {
- setActiveHeroSlide((slide) => (slide + direction + heroSlides.length) % heroSlides.length);
+ setActiveHeroSlide((slide) => (slide + direction + managedHeroSlides.length) % managedHeroSlides.length);
  };
 
  // 初始化阻尼滚动 (Lenis 动态绑定到当前页面)
@@ -500,7 +524,7 @@ export default function Home() {
  
  {/* 列 1: 品牌与引导 */}
  <div className="w-full flex flex-col items-start">
-          <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt={t("Lan Chuang")} className="w-full max-w-[190px] md:max-w-[230px] h-auto object-contain mb-6 mix-blend-multiply" />
+          <img src={siteLogo} alt={siteName} className="w-full max-w-[190px] md:max-w-[230px] h-auto object-contain mb-6 mix-blend-multiply" />
  <h4 className="text-base font-bold text-slate-900 mb-2">{t("Are you ready to get started?")}</h4>
  <p className="text-xs text-slate-500 leading-relaxed mb-6 font-medium">{t("Contact us to tailor the most suitable product for your business.")}</p>
  <button onClick={() => transitionTo('contact')} className="bg-red-600 text-white px-8 py-3 font-bold text-[10px] tracking-widest hover:bg-red-700 hover:shadow-[0_10px_20px_rgba(220,38,38,0.2)] hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-3 group">
@@ -510,7 +534,7 @@ export default function Home() {
  <div className="mt-7">
  <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">{t("Follow Us")}</p>
  <div className="flex flex-wrap items-center gap-2" aria-label={t("Social media")}>
- {socialLinks.map((social) => social.href ? (
+ {managedSocialLinks.map((social) => social.href ? (
  <a
  key={social.id}
  href={social.href}
@@ -578,18 +602,12 @@ export default function Home() {
  {t("West Zone 3-46, Hebeipu Standard Parts Industrial City,")}<br/>{t("Linmingguan Town, Yongnian District,")}<br/>{t("Handan, Hebei, China")}
  </span>
  </li>
- <li className="flex items-center gap-4 group">
+ {whatsappContacts.map((contact) => (
+ <li key={contact.id || contact.whatsappNumber} className="flex items-center gap-4 group">
  <WhatsAppIcon className="w-5 h-5 text-[#128c4a] shrink-0" />
- <a href="https://wa.me/8613333105125" target="_blank" rel="noopener noreferrer" className="text-[13px] text-slate-500 font-medium group-hover:text-[#128c4a] transition-colors duration-300" aria-label={t("Chat with White Cheng on WhatsApp")}>{t("White Cheng: +86 133 3310 5125")}</a>
+ <a href={`https://wa.me/${contact.whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="text-[13px] text-slate-500 font-medium group-hover:text-[#128c4a] transition-colors duration-300" aria-label={`${t('Chat with')} ${contact.name}`}>{contact.name}: {contact.displayNumber}</a>
  </li>
- <li className="flex items-center gap-4 group">
- <WhatsAppIcon className="w-5 h-5 text-[#128c4a] shrink-0" />
- <a href="https://wa.me/8617731007148" target="_blank" rel="noopener noreferrer" className="text-[13px] text-slate-500 font-medium group-hover:text-[#128c4a] transition-colors duration-300" aria-label={t("Chat with Ava on WhatsApp")}>{t("Ava: +86 177 3100 7148")}</a>
- </li>
- <li className="flex items-center gap-4 group">
- <WhatsAppIcon className="w-5 h-5 text-[#128c4a] shrink-0" />
- <a href="https://wa.me/8615232090227" target="_blank" rel="noopener noreferrer" className="text-[13px] text-slate-500 font-medium group-hover:text-[#128c4a] transition-colors duration-300" aria-label={t("Chat with Flynn on WhatsApp")}>{t("Flynn: +86 152 3209 0227")}</a>
- </li>
+ ))}
  <li className="flex items-center gap-4 group">
  <EmailIcon className="w-5 h-5 text-slate-400 group-hover:text-red-600 transition-colors shrink-0" />
  <a href={`mailto:${contactEmail}`} className="text-[13px] text-slate-500 font-medium group-hover:text-red-600 transition-colors duration-300 break-all">{contactEmail}</a>
@@ -612,12 +630,11 @@ export default function Home() {
  return (
  <>
  <div className="motion-overlay" id="blur-layer"></div>
- <WhatsAppFloatingButtons locale={locale} />
 
  {/* 顶部导航栏 - 亮色玻璃态 */}
- <nav dir="ltr" className="fixed top-0 left-0 w-full h-[72px] md:h-auto z-[1000] flex justify-between items-center gap-3 px-5 md:px-12 py-0 md:py-2 bg-white/90 backdrop-blur-2xl border-b border-slate-200 transition-all duration-500 shadow-sm">
+ <nav dir="ltr" className="fixed top-0 left-0 w-full h-[72px] md:h-auto z-[1000] flex justify-between items-center gap-3 px-5 md:px-12 py-0 md:py-2 bg-white border-b border-slate-200 transition-all duration-500 shadow-sm">
  <div className="cursor-pointer -ml-2 md:-ml-6" onClick={() => transitionTo('home')}>
-        <img src="/img/lanchuang/logo.jpg?v=20260728-1" alt={t("Lan Chuang Fasteners")} className="h-12 md:h-20 w-auto max-w-[170px] md:max-w-[210px] object-contain mix-blend-multiply" />
+        <img src={siteLogo} alt={siteName} className="h-12 md:h-20 w-auto max-w-[170px] md:max-w-[210px] object-contain mix-blend-multiply" />
  </div>
  
  {/* 桌面端导航 */}
@@ -703,7 +720,7 @@ export default function Home() {
  >
  {/* 高清沙滩风景背景 */}
  <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
- {heroSlides.map((slide, index) => (
+ {managedHeroSlides.map((slide, index) => (
  <img
  key={slide.src}
  src={slide.src}
@@ -771,7 +788,7 @@ export default function Home() {
  </button>
 
  <div className="hidden sm:flex items-center gap-3 px-4 h-11 md:h-12 bg-black/20 border border-white/25 backdrop-blur-md">
- {heroSlides.map((slide, index) => (
+ {managedHeroSlides.map((slide, index) => (
  <button
  key={slide.src}
  type="button"
@@ -781,7 +798,7 @@ export default function Home() {
  aria-current={activeHeroSlide === index ? 'true' : undefined}
  />
  ))}
- <span className="ml-1 text-[10px] font-bold tracking-[0.2em] text-white tabular-nums">0{activeHeroSlide + 1} / 0{heroSlides.length}</span>
+ <span className="ml-1 text-[10px] font-bold tracking-[0.2em] text-white tabular-nums">0{activeHeroSlide + 1} / 0{managedHeroSlides.length}</span>
  </div>
 
  <button
@@ -802,7 +819,7 @@ export default function Home() {
  </h2>
  
  <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 lg:gap-8 w-full max-w-[1200px]">
- {categoryCards.map((cat, idx) => (
+ {categoryCardsManaged.map((cat, idx) => (
  <div 
  key={idx} 
  className="group relative w-full aspect-[4/5] cursor-pointer"
@@ -857,7 +874,7 @@ export default function Home() {
  loop
  playsInline
  preload="metadata"
- poster="/img/lanchuang/factory-2.jpg"
+ poster={imageFor('home.whoWeAre.poster', '/img/lanchuang/factory-2.jpg')}
  aria-label={t("Handan Lanchuang fastener production")}
  className="w-full aspect-[16/10] object-cover transform group-hover:scale-105 transition-transform duration-1000 ease-out"
  >
@@ -915,7 +932,7 @@ export default function Home() {
  </h2>
 
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-8 w-full max-w-[1600px]">
- {servicesData.map((svc, idx) => (
+ {managedServicesData.map((svc, idx) => (
  <div
  key={idx}
  onClick={() => { setSelectedServiceDetail({ ...svc, index: idx }); transitionTo('service-detail'); }}
@@ -962,7 +979,7 @@ export default function Home() {
  <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-4 lg:gap-8 items-stretch">
  {/* 左侧：缩略图列表 (桌面端整列高度与右侧预览一致) */}
  <div className="w-full lg:w-[220px] shrink-0 grid grid-cols-3 sm:grid-cols-6 lg:flex lg:flex-col gap-2 sm:gap-3 lg:h-[520px]">
- {scenariosData.map((scenario, idx) => {
+ {managedScenariosData.map((scenario, idx) => {
  const isActive = activeScenario === idx;
  return (
  <div
@@ -980,7 +997,7 @@ export default function Home() {
 
  {/* 右侧：放大预览 */}
  <div className="w-full flex-none lg:flex-1 relative h-[240px] sm:h-[360px] lg:h-[520px] overflow-hidden bg-black">
- {scenariosData.map((scenario, idx) => (
+ {managedScenariosData.map((scenario, idx) => (
  <div
  key={idx}
  className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${activeScenario === idx ? 'opacity-100' : 'opacity-0'}`}
@@ -1012,7 +1029,7 @@ export default function Home() {
  </p>
 
  <div className="flex flex-col gap-6 md:gap-8 w-full">
- <ContactMethods locale={locale} />
+ <ContactMethods locale={locale} contacts={whatsappContacts} email={contactEmail} />
  {/* Location */}
  <div className="flex items-start gap-6 group cursor-pointer">
  <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">
@@ -1095,7 +1112,7 @@ export default function Home() {
  {/* 顶部 Banner */}
  <div className="relative w-full h-[34vh] min-h-[240px] md:h-[45vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/40 z-10"></div>
- <img src="/img/lanchuang/factory-1.jpg" alt={t("Fastener production facility")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src={imageFor('products.banner', '/img/lanchuang/factory-1.jpg')} alt={t("Fastener production facility")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-6 md:px-12">
  <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  {t("Products")}
@@ -1230,18 +1247,12 @@ export default function Home() {
  <span className="text-[12px] font-bold text-slate-900 tracking-[0.15em] uppercase">{t("Contact Us")}</span>
  </div>
  <ul className="flex flex-col text-[12px] text-slate-600">
- <li className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
- <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
- <a href="https://wa.me/8613333105125" target="_blank" rel="noopener noreferrer" className="hover:text-[#128c4a] transition-colors">{t("White Cheng: +86 133 3310 5125")}</a>
+ {whatsappContacts.map((contact) => (
+ <li key={contact.id || contact.whatsappNumber} className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
+ <WhatsAppIcon className="w-4 h-4 text-[#128c4a]" />
+ <a href={`https://wa.me/${contact.whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#128c4a] transition-colors">{contact.name}: {contact.displayNumber}</a>
  </li>
- <li className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
- <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
- <a href="https://wa.me/8617731007148" target="_blank" rel="noopener noreferrer" className="hover:text-[#128c4a] transition-colors">{t("Ava: +86 177 3100 7148")}</a>
- </li>
- <li className="px-5 py-3 flex items-center gap-2 border-t border-slate-100">
- <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
- <a href="https://wa.me/8615232090227" target="_blank" rel="noopener noreferrer" className="hover:text-[#128c4a] transition-colors">{t("Flynn: +86 152 3209 0227")}</a>
- </li>
+ ))}
  </ul>
  </div>
  </aside>
@@ -1276,7 +1287,7 @@ export default function Home() {
  {t("Contact Us")}
  </button>
  <a
- href="https://wa.me/8615232090227"
+ href={`https://wa.me/${whatsappContacts[0]?.whatsappNumber || '8613333105125'}`}
  target="_blank"
  rel="noopener noreferrer"
  className="flex items-center gap-2 text-red-600 font-medium text-sm hover:text-red-700 transition-colors"
@@ -1407,7 +1418,7 @@ export default function Home() {
  {/* About 顶部 Banner */}
  <div className="relative w-full h-[34vh] min-h-[240px] md:h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/50 z-10"></div>
- <img src="/img/lanchuang/factory-1.jpg" alt={t("Handan Lanchuang factory")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src={imageFor('about.banner', '/img/lanchuang/factory-1.jpg')} alt={t("Handan Lanchuang factory")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-6 md:px-12">
  <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  {t("About Us")}
@@ -1421,7 +1432,7 @@ export default function Home() {
  <div className="w-full max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
  {/* 左侧：企业大楼/生产基地展示 */}
  <div className="w-full lg:w-1/2 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
- <img src="/img/lanchuang/factory-2.jpg" alt={t("Handan Lanchuang production equipment")} className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
+ <img src={imageFor('about.factory', '/img/lanchuang/factory-2.jpg')} alt={t("Handan Lanchuang production equipment")} className="w-full aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-1000 ease-out" />
  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700"></div>
  </div>
  {/* 右侧：详细介绍与数据统计 */}
@@ -1470,7 +1481,7 @@ export default function Home() {
  {/* 右侧：产品视频 */}
  <div className="w-full lg:w-1/2 max-w-[555px] mx-auto relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
  <img
- src="/img/lanchuang/factory-1.jpg"
+ src={imageFor('about.cta', '/img/lanchuang/factory-1.jpg')}
  alt={t("Lan Chuang fastener production workshop")}
  className="w-full aspect-[4/3] object-cover"
  />
@@ -1493,7 +1504,7 @@ export default function Home() {
  {/* Services 顶部 Banner */}
  <div className="relative w-full h-[34vh] min-h-[240px] md:h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/50 z-10"></div>
- <img src="/img/lanchuang/factory-2.jpg" alt={t("Fastener manufacturing services")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src={imageFor('services.banner', '/img/lanchuang/factory-2.jpg')} alt={t("Fastener manufacturing services")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-6 md:px-12">
  <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  {t("Services")}
@@ -1504,7 +1515,7 @@ export default function Home() {
 
  {/* 核心服务区域 (交替布局) */}
  <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 py-16 md:py-32 flex flex-col gap-16 md:gap-32">
- {servicesData.map((svc, idx) => (
+ {managedServicesData.map((svc, idx) => (
  <div key={idx} className={`flex flex-col lg:flex-row gap-8 lg:gap-16 items-center ${idx % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
  {/* 图片 */}
  <div className="w-full lg:w-1/2 relative group overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)]">
@@ -1589,7 +1600,7 @@ export default function Home() {
  {/* Contact 顶部 Banner */}
  <div className="relative w-full h-[34vh] min-h-[240px] md:h-[50vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
  <div className="absolute inset-0 bg-black/60 z-10"></div>
- <img src="/img/lanchuang/factory-2.jpg" alt={t("Contact Handan Lanchuang")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <img src={imageFor('contact.banner', '/img/lanchuang/factory-2.jpg')} alt={t("Contact Handan Lanchuang")} className="absolute inset-0 w-full h-full object-cover opacity-60" />
  <div className="relative z-20 text-center px-6 md:px-12">
  <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">
  {t("Contact Us")}
@@ -1612,7 +1623,7 @@ export default function Home() {
  </p>
 
  <div className="flex flex-col gap-6 md:gap-8 w-full">
- <ContactMethods locale={locale} />
+ <ContactMethods locale={locale} contacts={whatsappContacts} email={contactEmail} />
  {/* Location */}
  <div className="flex items-start gap-6 group cursor-pointer">
  <div className="w-14 h-14 bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-red-600 group-hover:border-red-600 transition-colors duration-300 shrink-0 shadow-sm">

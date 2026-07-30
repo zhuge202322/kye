@@ -1,0 +1,422 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-29T10:16:37.018Z",
+  "site": {
+    "name": "Lan Chuang Fasteners",
+    "logo": "/img/lanchuang/logo.jpg?v=20260728-1",
+    "email": "info@handanbolt.com"
+  },
+  "categories": [
+    {
+      "id": "bolt",
+      "name": "Bolt",
+      "image": "/img/lanchuang/bolt-allen-1.png"
+    },
+    {
+      "id": "nut",
+      "name": "Nut",
+      "image": "/img/lanchuang/nut-cap.png"
+    },
+    {
+      "id": "threaded-rods",
+      "name": "Threaded Rods",
+      "image": "/img/lanchuang/rod-high-tensile-1.png"
+    },
+    {
+      "id": "anchor",
+      "name": "Anchor",
+      "image": "/img/lanchuang/anchor-drop-in.png"
+    },
+    {
+      "id": "washer",
+      "name": "Washer",
+      "image": "/img/lanchuang/washer-flat.png"
+    },
+    {
+      "id": "screw",
+      "name": "Screw",
+      "image": "/img/lanchuang/screw-self-drilling.jpg"
+    }
+  ],
+  "products": [
+    {
+      "id": "drop-in-anchor",
+      "categoryId": "anchor",
+      "name": "Drop-In Anchor",
+      "thumbnail": "/img/lanchuang/anchor-drop-in.png",
+      "descriptionHtml": "<h3>Drop-In Anchor</h3><p>Professional anchoring solution manufactured by Handan Lanchuang Fastener Manufacturing Co., Ltd. Available for standard and OEM orders with stable dimensions and consistent quality.</p><p>Products can be supplied to GB, DIN, ANSI and ISO requirements, with surface treatment options selected to suit the project environment.</p>"
+    },
+    {
+      "id": "expansion-bolt",
+      "categoryId": "anchor",
+      "name": "Expansion Bolt",
+      "thumbnail": "/img/lanchuang/anchor-expansion.png",
+      "descriptionHtml": "<h3>Expansion Bolt</h3><p>A dependable fastening solution for construction, engineering and steel structure applications. We support volume production and customized requirements for global customers.</p><p>Available with hot-dip galvanizing, electro-galvanizing, blackening, Dacromet and mechanical galvanizing options.</p>"
+    },
+    {
+      "id": "sleeve-anchor",
+      "categoryId": "anchor",
+      "name": "Sleeve Anchor",
+      "thumbnail": "/img/lanchuang/anchor-sleeve.png",
+      "descriptionHtml": "<h3>Sleeve Anchor</h3><p>Manufactured through complete production lines and strict quality control to deliver consistent dimensions, stable performance and reliable order fulfillment.</p>"
+    },
+    {
+      "id": "wedge-anchor-variant-1",
+      "categoryId": "anchor",
+      "name": "Wedge Anchor - Variant 1",
+      "thumbnail": "/img/lanchuang/anchor-wedge-1.png",
+      "descriptionHtml": "<h3>Wedge Anchor</h3><p>Standard and OEM wedge anchors for professional construction and engineering requirements. International standard and surface treatment options are available on request.</p>"
+    },
+    {
+      "id": "wedge-anchor-variant-2",
+      "categoryId": "anchor",
+      "name": "Wedge Anchor - Variant 2",
+      "thumbnail": "/img/lanchuang/anchor-wedge-2.png",
+      "descriptionHtml": "<h3>Wedge Anchor</h3><p>Produced for dependable installation and repeatable quality. Handan Lanchuang supports large-volume orders and customized fastening solutions.</p>"
+    },
+    {
+      "id": "allen-bolt-variant-1",
+      "categoryId": "bolt",
+      "name": "Allen Bolt - Variant 1",
+      "thumbnail": "/img/lanchuang/bolt-allen-1.png",
+      "descriptionHtml": "<h3>Allen Bolt</h3><p>Precision-manufactured bolt for machinery, equipment and general industrial fastening. Standard and OEM configurations are available.</p>"
+    },
+    {
+      "id": "allen-bolt-variant-2",
+      "categoryId": "bolt",
+      "name": "Allen Bolt - Variant 2",
+      "thumbnail": "/img/lanchuang/bolt-allen-2.png",
+      "descriptionHtml": "<h3>Allen Bolt</h3><p>Manufactured under strict quality controls for stable performance and consistent dimensions. Contact us with your standard, size and surface treatment requirements.</p>"
+    },
+    {
+      "id": "carriage-bolt-variant-1",
+      "categoryId": "bolt",
+      "name": "Carriage Bolt - Variant 1",
+      "thumbnail": "/img/lanchuang/bolt-carriage-1.jpg",
+      "descriptionHtml": "<h3>Carriage Bolt</h3><p>Quality carriage bolts for construction, steel structure, machinery and customized assembly applications. GB, DIN, ANSI and ISO orders are supported.</p>"
+    },
+    {
+      "id": "carriage-bolt-variant-2",
+      "categoryId": "bolt",
+      "name": "Carriage Bolt - Variant 2",
+      "thumbnail": "/img/lanchuang/bolt-carriage-2.jpg",
+      "descriptionHtml": "<h3>Carriage Bolt</h3><p>Reliable standard and OEM fasteners supplied with flexible surface treatment options and efficient delivery for overseas projects.</p>"
+    },
+    {
+      "id": "flange-bolt-variant-1",
+      "categoryId": "bolt",
+      "name": "Flange Bolt - Variant 1",
+      "thumbnail": "/img/lanchuang/bolt-flange-1.png",
+      "descriptionHtml": "<h3>Flange Bolt</h3><p>Industrial flange bolt manufactured for consistent fit and dependable performance. Suitable for standard supply programs and customized orders.</p>"
+    },
+    {
+      "id": "flange-bolt-variant-2",
+      "categoryId": "bolt",
+      "name": "Flange Bolt - Variant 2",
+      "thumbnail": "/img/lanchuang/bolt-flange-2.png",
+      "descriptionHtml": "<h3>Flange Bolt</h3><p>Supported by complete production equipment and rigorous inspection, our flange bolts are available to international standards and project requirements.</p>"
+    },
+    {
+      "id": "flange-bolt-variant-3",
+      "categoryId": "bolt",
+      "name": "Flange Bolt - Variant 3",
+      "thumbnail": "/img/lanchuang/bolt-flange-3.png",
+      "descriptionHtml": "<h3>Flange Bolt</h3><p>Made for global industrial customers with options for material, dimensions, standards and corrosion-resistant surface treatments.</p>"
+    },
+    {
+      "id": "hex-bolt-variant-1",
+      "categoryId": "bolt",
+      "name": "Hex Bolt - Variant 1",
+      "thumbnail": "/img/lanchuang/bolt-hex-1.png",
+      "descriptionHtml": "<h3>Hex Bolt</h3><p>A core fastening product available in standard and OEM configurations. We support bulk orders for engineering, machinery and steel structure applications.</p>"
+    },
+    {
+      "id": "hex-bolt-variant-2",
+      "categoryId": "bolt",
+      "name": "Hex Bolt - Variant 2",
+      "thumbnail": "/img/lanchuang/bolt-hex-2.png",
+      "descriptionHtml": "<h3>Hex Bolt</h3><p>Manufactured with strict dimensional and quality controls. Supply can be matched to GB, DIN, ANSI and ISO requirements.</p>"
+    },
+    {
+      "id": "zinc-plated-bolt",
+      "categoryId": "bolt",
+      "name": "Zinc-Plated Bolt",
+      "thumbnail": "/img/lanchuang/bolt-zinc-plated.png",
+      "descriptionHtml": "<h3>Zinc-Plated Bolt</h3><p>Fastener with an electro-galvanized finish for projects requiring a practical corrosion-resistant surface. Custom sizes and order quantities are supported.</p>"
+    },
+    {
+      "id": "cap-nut",
+      "categoryId": "nut",
+      "name": "Cap Nut",
+      "thumbnail": "/img/lanchuang/nut-cap.png",
+      "descriptionHtml": "<h3>Cap Nut</h3><p>Standard and OEM cap nuts manufactured for consistent assembly quality. Available with multiple finish options to meet different project requirements.</p>"
+    },
+    {
+      "id": "flange-nut",
+      "categoryId": "nut",
+      "name": "Flange Nut",
+      "thumbnail": "/img/lanchuang/nut-flange.png",
+      "descriptionHtml": "<h3>Flange Nut</h3><p>Professional flange nut supply for construction, machinery and industrial assembly. International standard and customized production are available.</p>"
+    },
+    {
+      "id": "hex-nut",
+      "categoryId": "nut",
+      "name": "Hex Nut",
+      "thumbnail": "/img/lanchuang/nut-hex.png",
+      "descriptionHtml": "<h3>Hex Nut</h3><p>Reliable hex nuts for a wide range of fastening systems. Manufactured under strict quality controls for stable dimensions and repeatable performance.</p>"
+    },
+    {
+      "id": "nylon-lock-nut-variant-1",
+      "categoryId": "nut",
+      "name": "Nylon Lock Nut - Variant 1",
+      "thumbnail": "/img/lanchuang/nut-nylon-lock-1.png",
+      "descriptionHtml": "<h3>Nylon Lock Nut</h3><p>Standard and customized nylon lock nuts supplied for machinery, equipment and general industrial applications.</p>"
+    },
+    {
+      "id": "nylon-lock-nut-variant-2",
+      "categoryId": "nut",
+      "name": "Nylon Lock Nut - Variant 2",
+      "thumbnail": "/img/lanchuang/nut-nylon-lock-2.png",
+      "descriptionHtml": "<h3>Nylon Lock Nut</h3><p>Manufactured for dependable fastening and consistent batch quality, with flexible order support for overseas customers.</p>"
+    },
+    {
+      "id": "self-drilling-screw",
+      "categoryId": "screw",
+      "name": "Self-Drilling Screw",
+      "thumbnail": "/img/lanchuang/screw-self-drilling.jpg",
+      "descriptionHtml": "<h3>Self-Drilling Screw</h3><p>Efficient fastening solution supplied for construction, steel structure and general fabrication. Standard and OEM requirements are welcome.</p>"
+    },
+    {
+      "id": "high-tensile-threaded-rod-variant-1",
+      "categoryId": "threaded-rods",
+      "name": "High-Tensile Threaded Rod - Variant 1",
+      "thumbnail": "/img/lanchuang/rod-high-tensile-1.png",
+      "descriptionHtml": "<h3>High-Tensile Threaded Rod</h3><p>Manufactured for demanding engineering, construction and industrial fastening applications with consistent dimensions and controlled quality.</p>"
+    },
+    {
+      "id": "high-tensile-threaded-rod-variant-2",
+      "categoryId": "threaded-rods",
+      "name": "High-Tensile Threaded Rod - Variant 2",
+      "thumbnail": "/img/lanchuang/rod-high-tensile-2.png",
+      "descriptionHtml": "<h3>High-Tensile Threaded Rod</h3><p>Available for standard and customized production, with multiple corrosion-resistant surface treatments for project-specific needs.</p>"
+    },
+    {
+      "id": "high-tensile-threaded-stud",
+      "categoryId": "threaded-rods",
+      "name": "High-Tensile Threaded Stud",
+      "thumbnail": "/img/lanchuang/stud-high-tensile.png",
+      "descriptionHtml": "<h3>High-Tensile Threaded Stud</h3><p>Professional threaded stud solution for machinery, structures and engineering installations. Large-volume and OEM orders are supported.</p>"
+    },
+    {
+      "id": "threaded-rod-variant-1",
+      "categoryId": "threaded-rods",
+      "name": "Threaded Rod - Variant 1",
+      "thumbnail": "/img/lanchuang/rod-threaded-1.png",
+      "descriptionHtml": "<h3>Threaded Rod</h3><p>Versatile threaded rods manufactured to international standards and customer drawings for construction, machinery and steel structures.</p>"
+    },
+    {
+      "id": "threaded-rod-variant-2",
+      "categoryId": "threaded-rods",
+      "name": "Threaded Rod - Variant 2",
+      "thumbnail": "/img/lanchuang/rod-threaded-2.png",
+      "descriptionHtml": "<h3>Threaded Rod</h3><p>Complete production capability supports stable batch quality, competitive pricing and on-time delivery for overseas customers.</p>"
+    },
+    {
+      "id": "threaded-rod-variant-3",
+      "categoryId": "threaded-rods",
+      "name": "Threaded Rod - Variant 3",
+      "thumbnail": "/img/lanchuang/rod-threaded-3.png",
+      "descriptionHtml": "<h3>Threaded Rod</h3><p>Available in standard and OEM configurations with finish options including galvanizing, blackening, Dacromet and mechanical galvanizing.</p>"
+    },
+    {
+      "id": "threaded-rod-variant-4",
+      "categoryId": "threaded-rods",
+      "name": "Threaded Rod - Variant 4",
+      "thumbnail": "/img/lanchuang/rod-threaded-4.png",
+      "descriptionHtml": "<h3>Threaded Rod</h3><p>Reliable fastening component for engineering and industrial projects, backed by strict inspection and efficient order support.</p>"
+    },
+    {
+      "id": "flat-washer",
+      "categoryId": "washer",
+      "name": "Flat Washer",
+      "thumbnail": "/img/lanchuang/washer-flat.png",
+      "descriptionHtml": "<h3>Flat Washer</h3><p>Standard flat washer for general fastening assemblies. International standards, OEM dimensions and bulk order production are supported.</p>"
+    },
+    {
+      "id": "zinc-plated-flat-washer",
+      "categoryId": "washer",
+      "name": "Zinc-Plated Flat Washer",
+      "thumbnail": "/img/lanchuang/washer-zinc-plated.png",
+      "descriptionHtml": "<h3>Zinc-Plated Flat Washer</h3><p>Electro-galvanized flat washer produced for consistent dimensions and a practical corrosion-resistant finish. Contact us for size and standard options.</p>"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "white-cheng",
+      "name": "White Cheng",
+      "displayNumber": "+86 133 3310 5125",
+      "whatsappNumber": "8613333105125"
+    },
+    {
+      "id": "ava",
+      "name": "Ava",
+      "displayNumber": "+86 177 3100 7148",
+      "whatsappNumber": "8617731007148"
+    },
+    {
+      "id": "flynn",
+      "name": "Flynn",
+      "displayNumber": "+86 152 3209 0227",
+      "whatsappNumber": "8615232090227"
+    }
+  ],
+  "socials": [
+    {
+      "id": "facebook",
+      "label": "Facebook",
+      "url": ""
+    },
+    {
+      "id": "instagram",
+      "label": "Instagram",
+      "url": ""
+    },
+    {
+      "id": "tiktok",
+      "label": "TikTok",
+      "url": ""
+    },
+    {
+      "id": "youtube",
+      "label": "YouTube",
+      "url": ""
+    },
+    {
+      "id": "linkedin",
+      "label": "LinkedIn",
+      "url": ""
+    }
+  ],
+  "images": [
+    {
+      "id": "home.hero.1",
+      "group": "首页",
+      "label": "Hero 轮播图 1",
+      "url": "/img/hero/metal-fabrication.jpg"
+    },
+    {
+      "id": "home.hero.2",
+      "group": "首页",
+      "label": "Hero 轮播图 2",
+      "url": "/img/hero/precision-engineering.jpg"
+    },
+    {
+      "id": "home.hero.3",
+      "group": "首页",
+      "label": "Hero 轮播图 3",
+      "url": "/img/hero/industrial-equipment.jpg"
+    },
+    {
+      "id": "home.whoWeAre.poster",
+      "group": "首页",
+      "label": "Who We Are 视频封面",
+      "url": "/img/lanchuang/factory-2.jpg"
+    },
+    {
+      "id": "home.service.1",
+      "group": "首页 / Services",
+      "label": "Standard & OEM Manufacturing",
+      "url": "/img/services/standard-oem.jpg"
+    },
+    {
+      "id": "home.service.2",
+      "group": "首页 / Services",
+      "label": "Reliable Production",
+      "url": "/img/services/production-machining.jpg"
+    },
+    {
+      "id": "home.service.3",
+      "group": "首页 / Services",
+      "label": "Strict Quality Control",
+      "url": "/img/services/quality-control.jpg"
+    },
+    {
+      "id": "home.service.4",
+      "group": "首页 / Services",
+      "label": "Surface Treatment Options",
+      "url": "/img/services/surface-treatment.jpg"
+    },
+    {
+      "id": "home.application.1",
+      "group": "首页",
+      "label": "Construction & Infrastructure",
+      "url": "/img/lanchuang/anchor-wedge-1.png"
+    },
+    {
+      "id": "home.application.2",
+      "group": "首页",
+      "label": "Automotive & Transportation",
+      "url": "/img/applications/automotive-machining.jpg"
+    },
+    {
+      "id": "home.application.3",
+      "group": "首页",
+      "label": "Machinery & Equipment",
+      "url": "/img/applications/flange-components.jpg"
+    },
+    {
+      "id": "home.application.4",
+      "group": "首页",
+      "label": "Electronics & Electrical",
+      "url": "/img/applications/quality-measurement.jpg"
+    },
+    {
+      "id": "home.application.5",
+      "group": "首页",
+      "label": "Rail & Infrastructure",
+      "url": "/img/applications/lap-joint-flanges.jpg"
+    },
+    {
+      "id": "home.application.6",
+      "group": "首页",
+      "label": "Custom / OEM Projects",
+      "url": "/img/applications/custom-oem-quality.jpg"
+    },
+    {
+      "id": "products.banner",
+      "group": "产品页",
+      "label": "产品页顶部横幅",
+      "url": "/img/lanchuang/factory-1.jpg"
+    },
+    {
+      "id": "about.banner",
+      "group": "关于我们",
+      "label": "关于我们顶部横幅",
+      "url": "/img/lanchuang/factory-1.jpg"
+    },
+    {
+      "id": "about.factory",
+      "group": "关于我们",
+      "label": "公司工厂图片",
+      "url": "/img/lanchuang/factory-2.jpg"
+    },
+    {
+      "id": "about.cta",
+      "group": "关于我们",
+      "label": "关于我们底部图片",
+      "url": "/img/lanchuang/factory-1.jpg"
+    },
+    {
+      "id": "services.banner",
+      "group": "服务页",
+      "label": "服务页顶部横幅",
+      "url": "/img/lanchuang/factory-2.jpg"
+    },
+    {
+      "id": "contact.banner",
+      "group": "联系我们",
+      "label": "联系我们顶部横幅",
+      "url": "/img/lanchuang/factory-2.jpg"
+    }
+  ]
+}
