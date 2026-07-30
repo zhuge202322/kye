@@ -6,6 +6,8 @@ const clean = (value) => String(value ?? '').trim();
 const isWebUrl = (value) => /^https?:\/\//i.test(clean(value));
 const isAssetUrl = (value) => clean(value).startsWith('/') || isWebUrl(value);
 
+export const ORDER_STATUSES = ['pending', 'confirmed', 'in_production', 'quality_check', 'ready_to_ship', 'shipped', 'completed'];
+
 function slugify(value) {
   const slug = clean(value)
     .toLowerCase()
@@ -34,8 +36,9 @@ export function validateContent(content) {
   if (!Array.isArray(content.contacts)) errors.push('Contacts must be an array.');
   if (!Array.isArray(content.socials)) errors.push('Social links must be an array.');
   if (!Array.isArray(content.images)) errors.push('Page images must be an array.');
+  if (!Array.isArray(content.orders)) errors.push('Orders must be an array.');
 
-  for (const key of ['categories', 'products', 'contacts', 'socials', 'images']) {
+  for (const key of ['categories', 'products', 'contacts', 'socials', 'images', 'orders']) {
     const ids = (content[key] ?? []).map((item) => clean(item.id));
     if (ids.some((id) => !id) || new Set(ids).size !== ids.length) errors.push(`${key} must use unique identifiers.`);
   }
@@ -58,7 +61,71 @@ export function validateContent(content) {
   for (const image of content.images ?? []) {
     if (!clean(image.group) || !clean(image.label) || !isAssetUrl(image.url)) errors.push('Every page image needs a group, label and safe image URL.');
   }
+  const contractNumbers = (content.orders ?? []).map((order) => clean(order.contractNumber).toLowerCase());
+  if (contractNumbers.some((number) => !number) || new Set(contractNumbers).size !== contractNumbers.length) errors.push('Contract numbers must be present and unique.');
+  for (const order of content.orders ?? []) {
+    if (!ORDER_STATUSES.includes(order.status)) errors.push(`Order ${order.contractNumber || order.id} has an invalid status.`);
+    if (!Number.isInteger(order.progress) || order.progress < 0 || order.progress > 100) errors.push(`Order ${order.contractNumber || order.id} progress must be an integer from 0 to 100.`);
+    if (!clean(order.updatedAt) || Number.isNaN(Date.parse(order.updatedAt))) errors.push(`Order ${order.contractNumber || order.id} needs a valid update time.`);
+  }
   return { ok: errors.length === 0, errors };
+}
+
+function normalizeOrderInput(input, updatedAt) {
+  const contractNumber = clean(input.contractNumber);
+  const progress = Number(input.progress);
+  if (!contractNumber) throw new Error('Contract number is required.');
+  if (!ORDER_STATUSES.includes(input.status)) throw new Error('Order status is invalid.');
+  if (!Number.isInteger(progress) || progress < 0 || progress > 100) throw new Error('Order progress must be an integer from 0 to 100.');
+  return {
+    contractNumber,
+    status: input.status,
+    progress,
+    note: clean(input.note),
+    updatedAt,
+  };
+}
+
+export function createOrder(content, input, updatedAt = new Date().toISOString()) {
+  const next = clone(content);
+  const normalized = normalizeOrderInput(input, updatedAt);
+  if (next.orders.some((order) => clean(order.contractNumber).toLowerCase() === normalized.contractNumber.toLowerCase())) {
+    throw new Error('Contract number already exists.');
+  }
+  next.orders.unshift({ id: uniqueId(next.orders, normalized.contractNumber), ...normalized });
+  return next;
+}
+
+export function updateOrder(content, id, input, updatedAt = new Date().toISOString()) {
+  const next = clone(content);
+  const order = next.orders.find((candidate) => candidate.id === id);
+  if (!order) throw new Error('Order not found.');
+  const normalized = normalizeOrderInput(input, updatedAt);
+  if (next.orders.some((candidate) => candidate.id !== id && clean(candidate.contractNumber).toLowerCase() === normalized.contractNumber.toLowerCase())) {
+    throw new Error('Contract number already exists.');
+  }
+  Object.assign(order, normalized);
+  return next;
+}
+
+export function deleteOrder(content, id) {
+  const next = clone(content);
+  const length = next.orders.length;
+  next.orders = next.orders.filter((order) => order.id !== id);
+  if (next.orders.length === length) throw new Error('Order not found.');
+  return next;
+}
+
+export function findOrderByContractNumber(content, contractNumber) {
+  const normalized = clean(contractNumber).toLowerCase();
+  if (!normalized) return null;
+  return content.orders?.find((order) => clean(order.contractNumber).toLowerCase() === normalized) ?? null;
+}
+
+export function toPublicContent(content) {
+  const publicContent = clone(content);
+  delete publicContent.orders;
+  return publicContent;
 }
 
 export function createCategory(content, input) {

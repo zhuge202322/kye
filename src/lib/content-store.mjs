@@ -28,6 +28,7 @@ const imageSlots = [
   ['about.cta', '关于我们', '关于我们底部图片', '/img/lanchuang/factory-1.jpg'],
   ['services.banner', '服务页', '服务页顶部横幅', '/img/lanchuang/factory-2.jpg'],
   ['contact.banner', '联系我们', '联系我们顶部横幅', '/img/lanchuang/factory-2.jpg'],
+  ['order.banner', '订单查询', '订单查询页顶部横幅', '/img/lanchuang/factory-2.jpg'],
 ];
 
 function slugify(value) {
@@ -77,6 +78,7 @@ export async function createDefaultContent() {
       { id: 'youtube', label: 'YouTube', url: '' },
       { id: 'linkedin', label: 'LinkedIn', url: '' },
     ],
+    orders: [],
     images: imageSlots.map(([id, group, label, url]) => ({ id, group, label, url })),
   };
 }

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-29T10:16:37.018Z",
+  "updatedAt": "2026-07-30T06:29:10.637Z",
   "site": {
     "name": "Lan Chuang Fasteners",
     "logo": "/img/lanchuang/logo.jpg?v=20260728-1",
@@ -297,6 +297,16 @@
       "url": ""
     }
   ],
+  "orders": [
+    {
+      "id": "order-ms74sp6f-nb73",
+      "contractNumber": "LC-2026-001",
+      "status": "in_production",
+      "progress": 0,
+      "note": "dsdsdsds",
+      "updatedAt": "2026-07-30T06:29:08.723Z"
+    }
+  ],
   "images": [
     {
       "id": "home.hero.1",
@@ -416,6 +426,12 @@
       "id": "contact.banner",
       "group": "联系我们",
       "label": "联系我们顶部横幅",
+      "url": "/img/lanchuang/factory-2.jpg"
+    },
+    {
+      "id": "order.banner",
+      "group": "订单查询",
+      "label": "订单查询页顶部横幅",
       "url": "/img/lanchuang/factory-2.jpg"
     }
   ]

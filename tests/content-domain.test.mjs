@@ -10,6 +10,11 @@ import {
   validateContent,
   validateUpload,
   validateImageSignature,
+  createOrder,
+  updateOrder,
+  deleteOrder,
+  findOrderByContractNumber,
+  toPublicContent,
 } from '../src/lib/content-domain.mjs';
 import { createSessionToken, verifySessionToken } from '../src/lib/admin-auth.mjs';
 
@@ -21,6 +26,14 @@ const baseContent = {
   contacts: [{ id: 'sales', name: 'Sales', displayNumber: '+86 1000', whatsappNumber: '861000' }],
   socials: [{ id: 'facebook', label: 'Facebook', url: '' }],
   images: [{ id: 'home.hero.1', group: 'Home', label: 'Hero 1', url: '/img/hero.jpg' }],
+  orders: [{
+    id: 'order-1',
+    contractNumber: 'LC-2026-001',
+    status: 'in_production',
+    progress: 45,
+    note: 'Production is progressing normally.',
+    updatedAt: '2026-07-30T00:00:00.000Z',
+  }],
 };
 
 const clone = () => structuredClone(baseContent);
@@ -40,6 +53,31 @@ test('content validation rejects unsafe links and duplicate identifiers', () => 
   const duplicate = clone();
   duplicate.categories.push({ ...duplicate.categories[0] });
   assert.equal(validateContent(duplicate).ok, false);
+});
+
+test('order CRUD enforces unique contract numbers and valid progress', () => {
+  const created = createOrder(clone(), {
+    contractNumber: 'LC-2026-002',
+    status: 'confirmed',
+    progress: 10,
+    note: 'Order confirmed.',
+  }, '2026-07-30T01:00:00.000Z');
+  assert.equal(created.orders.length, 2);
+  assert.throws(() => createOrder(created, { contractNumber: ' lc-2026-002 ', status: 'confirmed', progress: 10, note: '' }), /already exists/i);
+  assert.throws(() => updateOrder(created, created.orders[1].id, { contractNumber: 'LC-2026-002', status: 'confirmed', progress: 101, note: '' }), /progress/i);
+  assert.equal(deleteOrder(created, created.orders[1].id).orders.length, 1);
+});
+
+test('order lookup is exact, trimmed and case insensitive', () => {
+  assert.equal(findOrderByContractNumber(clone(), ' lc-2026-001 ')?.progress, 45);
+  assert.equal(findOrderByContractNumber(clone(), 'LC-2026'), null);
+  assert.equal(findOrderByContractNumber(clone(), ''), null);
+});
+
+test('public content never exposes the order collection', () => {
+  const publicContent = toPublicContent(clone());
+  assert.equal('orders' in publicContent, false);
+  assert.equal(publicContent.products.length, 1);
 });
 
 test('category CRUD rejects duplicate names and categories still in use', () => {

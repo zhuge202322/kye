@@ -9,6 +9,8 @@ type Product = { id: string; categoryId: string; name: string; thumbnail: string
 type Contact = { id: string; name: string; displayNumber: string; whatsappNumber: string };
 type Social = { id: string; label: string; url: string };
 type ImageSlot = { id: string; group: string; label: string; url: string };
+type OrderStatus = 'pending' | 'confirmed' | 'in_production' | 'quality_check' | 'ready_to_ship' | 'shipped' | 'completed';
+type Order = { id: string; contractNumber: string; status: OrderStatus; progress: number; note: string; updatedAt: string };
 type SiteContent = {
   version: number;
   updatedAt: string | null;
@@ -18,18 +20,30 @@ type SiteContent = {
   contacts: Contact[];
   socials: Social[];
   images: ImageSlot[];
+  orders: Order[];
 };
 
-type Section = 'overview' | 'categories' | 'products' | 'contacts' | 'brand' | 'images' | 'socials';
+type Section = 'overview' | 'categories' | 'products' | 'orders' | 'contacts' | 'brand' | 'images' | 'socials';
 
 const sections: { id: Section; label: string; short: string }[] = [
   { id: 'overview', label: '概览', short: '概' },
   { id: 'categories', label: '产品类目', short: '类' },
   { id: 'products', label: '产品', short: '品' },
+  { id: 'orders', label: '订单进度', short: '单' },
   { id: 'contacts', label: '客服联系方式', short: '客' },
   { id: 'brand', label: '品牌与网站', short: '牌' },
   { id: 'images', label: '页面图片', short: '图' },
   { id: 'socials', label: '社媒链接', short: '媒' },
+];
+
+const orderStatuses: { value: OrderStatus; label: string }[] = [
+  { value: 'pending', label: '待确认' },
+  { value: 'confirmed', label: '已确认' },
+  { value: 'in_production', label: '生产中' },
+  { value: 'quality_check', label: '质检中' },
+  { value: 'ready_to_ship', label: '待发货' },
+  { value: 'shipped', label: '已发货' },
+  { value: 'completed', label: '已完成' },
 ];
 
 const clone = <T,>(value: T): T => structuredClone(value);
@@ -96,6 +110,7 @@ export default function AdminPage() {
   const [savedContent, setSavedContent] = useState<SiteContent | null>(null);
   const [active, setActive] = useState<Section>('overview');
   const [search, setSearch] = useState('');
+  const [orderSearch, setOrderSearch] = useState('');
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
@@ -228,6 +243,7 @@ export default function AdminPage() {
   if (!content) return <main className="admin-loading">正在读取网站内容...</main>;
 
   const filteredProducts = content.products.filter((product) => product.name.toLowerCase().includes(search.toLowerCase()));
+  const filteredOrders = content.orders.filter((order) => order.contractNumber.toLowerCase().includes(orderSearch.trim().toLowerCase()));
   const product = content.products.find((item) => item.id === editingProduct);
   const groupedImages = content.images.reduce<Record<string, ImageSlot[]>>((groups, item) => {
     (groups[item.group] ??= []).push(item);
@@ -270,6 +286,7 @@ export default function AdminPage() {
               <div className="metrics-grid">
                 <button onClick={() => setActive('categories')}><small>产品类目</small><strong>{content.categories.length}</strong><span>管理类目 →</span></button>
                 <button onClick={() => setActive('products')}><small>产品总数</small><strong>{content.products.length}</strong><span>管理产品 →</span></button>
+                <button onClick={() => setActive('orders')}><small>订单数量</small><strong>{content.orders.length}</strong><span>管理订单 →</span></button>
                 <button onClick={() => setActive('contacts')}><small>客服账号</small><strong>{content.contacts.length}</strong><span>管理客服 →</span></button>
                 <button onClick={() => setActive('images')}><small>图片槽位</small><strong>{content.images.length}</strong><span>管理图片 →</span></button>
               </div>
@@ -319,6 +336,32 @@ export default function AdminPage() {
                   <Field label="WhatsApp 号码" value={contact.whatsappNumber} onChange={(value) => update((draft) => { draft.contacts[index].whatsappNumber = value.replace(/\D/g, ''); })} placeholder="86133..." />
                   <button className="button button-danger" onClick={() => window.confirm('确定删除这个客服吗？') && update((draft) => { draft.contacts.splice(index, 1); })}>删除</button>
                 </article>)}
+              </div>
+            </section>
+          )}
+
+          {active === 'orders' && (
+            <section>
+              <div className="section-heading row"><div><span>ORDER TRACKING</span><h2>订单进度管理</h2><p>客户使用合同号精确查询。修改状态、进度或备注后请点击右上角保存。</p></div><button className="button button-primary" onClick={() => update((draft) => draft.orders.unshift({ id: makeId('order'), contractNumber: `LC-${new Date().getFullYear()}-`, status: 'pending', progress: 0, note: '', updatedAt: new Date().toISOString() }))}>+ 添加订单</button></div>
+              <div className="product-toolbar"><input value={orderSearch} onChange={(event) => setOrderSearch(event.target.value)} placeholder="搜索合同号..." /><span>共 {filteredOrders.length} 个订单</span></div>
+              <div className="stack-list">
+                {filteredOrders.map((order) => {
+                  const index = content.orders.findIndex((candidate) => candidate.id === order.id);
+                  const touch = (draft: SiteContent) => { draft.orders[index].updatedAt = new Date().toISOString(); };
+                  return (
+                    <article className="panel order-row" key={order.id}>
+                      <div className="order-row-main">
+                        <Field label="合同号" value={order.contractNumber} onChange={(value) => update((draft) => { draft.orders[index].contractNumber = value.toUpperCase(); touch(draft); })} placeholder="LC-2026-001" />
+                        <label className="admin-field"><span>订单状态</span><select value={order.status} onChange={(event) => update((draft) => { draft.orders[index].status = event.target.value as OrderStatus; touch(draft); })}>{orderStatuses.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}</select></label>
+                        <label className="admin-field progress-field"><span>订单进度</span><div><input type="range" min="0" max="100" step="1" value={order.progress} onChange={(event) => update((draft) => { draft.orders[index].progress = Number(event.target.value); touch(draft); })} /><input type="number" min="0" max="100" value={order.progress} onChange={(event) => update((draft) => { draft.orders[index].progress = Math.max(0, Math.min(100, Number(event.target.value))); touch(draft); })} /><b>%</b></div></label>
+                        <button className="button button-danger" onClick={() => window.confirm('确定删除这个订单吗？') && update((draft) => { draft.orders.splice(index, 1); })}>删除</button>
+                      </div>
+                      <label className="admin-field"><span>客户可见备注</span><textarea rows={3} value={order.note} onChange={(event) => update((draft) => { draft.orders[index].note = event.target.value; touch(draft); })} placeholder="例如：产品正在生产，预计下周进入质量检验。" /></label>
+                      <small className="order-updated">更新时间：{new Date(order.updatedAt).toLocaleString('zh-CN')}</small>
+                    </article>
+                  );
+                })}
+                {filteredOrders.length === 0 && <div className="panel empty-admin-state">暂无订单，点击“添加订单”开始录入。</div>}
               </div>
             </section>
           )}

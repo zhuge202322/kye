@@ -23,6 +23,18 @@ type ManagedContent = {
 };
 
 type WhatsAppContact = { id?: string; name: string; displayNumber: string; whatsappNumber: string };
+type OrderStatus = 'pending' | 'confirmed' | 'in_production' | 'quality_check' | 'ready_to_ship' | 'shipped' | 'completed';
+type OrderLookupResult = { contractNumber: string; status: OrderStatus; progress: number; note: string; updatedAt: string };
+
+const orderStatusLabels: Record<OrderStatus, string> = {
+ pending: 'Pending',
+ confirmed: 'Confirmed',
+ in_production: 'In Production',
+ quality_check: 'Quality Check',
+ ready_to_ship: 'Ready to Ship',
+ shipped: 'Shipped',
+ completed: 'Completed',
+};
 
 type Service = {
  title: string;
@@ -306,6 +318,9 @@ export default function Home() {
  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
  const [heroPaused, setHeroPaused] = useState(false);
+ const [orderContractNumber, setOrderContractNumber] = useState('');
+ const [orderLookupState, setOrderLookupState] = useState<'idle' | 'loading' | 'found' | 'not-found' | 'error'>('idle');
+ const [orderLookupResult, setOrderLookupResult] = useState<OrderLookupResult | null>(null);
  const isTransitioning = useRef(false);
  const stageRef = useRef<HTMLDivElement>(null);
  const lenisRef = useRef<Lenis | null>(null);
@@ -383,6 +398,36 @@ export default function Home() {
 
  const changeHeroSlide = (direction: number) => {
  setActiveHeroSlide((slide) => (slide + direction + managedHeroSlides.length) % managedHeroSlides.length);
+ };
+
+ const lookupOrder = async (event: React.FormEvent<HTMLFormElement>) => {
+ event.preventDefault();
+ const contractNumber = orderContractNumber.trim();
+ if (contractNumber.length < 3) {
+ setOrderLookupState('error');
+ setOrderLookupResult(null);
+ return;
+ }
+
+ setOrderLookupState('loading');
+ setOrderLookupResult(null);
+ try {
+ const response = await fetch('/api/order-lookup', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ contractNumber }),
+ });
+ if (response.status === 404) {
+ setOrderLookupState('not-found');
+ return;
+ }
+ if (!response.ok) throw new Error('Order lookup failed');
+ const data = await response.json();
+ setOrderLookupResult(data.order);
+ setOrderLookupState('found');
+ } catch {
+ setOrderLookupState('error');
+ }
  };
 
  // 初始化阻尼滚动 (Lenis 动态绑定到当前页面)
@@ -514,6 +559,7 @@ export default function Home() {
  { id: 'about', label: 'About Us' },
  { id: 'products', label: 'Products', hasMegaMenu: true },
  { id: 'services', label: 'Services' },
+ { id: 'order-tracking', label: 'Order Tracking' },
  { id: 'contact', label: 'Contact Us' },
  ];
 
@@ -638,7 +684,7 @@ export default function Home() {
  </div>
  
  {/* 桌面端导航 */}
- <ul className="hidden lg:flex items-center gap-5 xl:gap-10">
+ <ul className="hidden xl:flex items-center gap-8">
  {navItems.map((item) => (
  <li 
  key={item.id}
@@ -679,7 +725,7 @@ export default function Home() {
  <LanguageSwitcher locale={locale} onChange={(nextLocale) => { setLocale(nextLocale); setMobileMenuOpen(false); }} />
  <button
  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
- className="lg:hidden flex flex-col justify-center items-center w-11 h-11 gap-[5px] focus:outline-none"
+ className="xl:hidden flex flex-col justify-center items-center w-11 h-11 gap-[5px] focus:outline-none"
  aria-label={t("Toggle menu")}
  >
  <span className={`w-6 h-[2px] bg-slate-900 transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-[7px]' : ''}`}></span>
@@ -689,7 +735,7 @@ export default function Home() {
 
  {/* 移动端展开菜单面板 */}
  </div>
- <div className={`lg:hidden fixed top-[72px] md:top-[96px] left-0 w-full bg-white border-b border-slate-200 shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 origin-top ${mobileMenuOpen ? 'opacity-100 visible scale-y-100' : 'opacity-0 invisible scale-y-0'}`}>
+ <div className={`xl:hidden fixed top-[72px] md:top-[96px] left-0 w-full bg-white border-b border-slate-200 shadow-[0_20px_40px_rgba(0,0,0,0.08)] transition-all duration-500 origin-top ${mobileMenuOpen ? 'opacity-100 visible scale-y-100' : 'opacity-0 invisible scale-y-0'}`}>
  <ul className="flex flex-col py-4">
  {navItems.map((item) => (
  <li
@@ -1592,7 +1638,85 @@ export default function Home() {
  </div>
  </div>
 
- {/* 页面 05: Contact Us (联系我们) */}
+ {/* 页面 05: Order Tracking (订单查询) */}
+ <div id="order-tracking" className="page-wrapper" style={{ display: 'none' }}>
+ <div className="page justify-start items-start !p-0 overflow-y-auto overflow-x-hidden" style={{ background: '#f8fafc', display: 'block' }}>
+ <div className="scroll-content w-full relative h-max flex-none min-h-screen flex flex-col">
+
+ <div className="relative w-full h-[34vh] min-h-[240px] md:h-[46vh] bg-[#0a0f1c] flex items-center justify-center overflow-hidden shrink-0 mt-[72px] md:mt-24">
+ <div className="absolute inset-0 bg-black/60 z-10"></div>
+ <img src={imageFor('order.banner', '/img/lanchuang/factory-2.jpg')} alt={t('Order Tracking')} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+ <div className="relative z-20 text-center px-6 md:px-12">
+ <h1 className="text-4xl md:text-7xl font-black font-yahei text-white mb-6 drop-shadow-lg">{t('Order Tracking')}</h1>
+ <div className="w-20 h-1 bg-red-600 mx-auto"></div>
+ </div>
+ </div>
+
+ <div className="w-full bg-white py-16 px-6 md:py-28 md:px-12 flex-1">
+ <div className="w-full max-w-[1100px] mx-auto">
+ <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-20 items-start">
+ <div className="lg:pt-4">
+ <h2 className="text-3xl md:text-4xl font-black text-slate-900 leading-tight mb-6">{t('Track Your Order')}</h2>
+ <p className="text-sm md:text-base leading-relaxed text-slate-600 max-w-md">{t('Enter your contract number to view the latest production and delivery status.')}</p>
+ <div className="mt-10 w-14 h-[2px] bg-red-600"></div>
+ </div>
+
+ <div>
+ <form onSubmit={lookupOrder} className="border border-slate-200 bg-slate-50 p-5 sm:p-8 md:p-10">
+ <label htmlFor="order-contract-number" className="block text-[10px] font-black uppercase tracking-[0.16em] text-slate-500 mb-3">{t('Contract Number')}</label>
+ <div className="flex flex-col sm:flex-row gap-3">
+ <input
+ id="order-contract-number"
+ value={orderContractNumber}
+ onChange={(event) => { setOrderContractNumber(event.target.value.toUpperCase()); if (orderLookupState !== 'idle') setOrderLookupState('idle'); }}
+ autoComplete="off"
+ maxLength={100}
+ placeholder="LC-2026-001"
+ className="min-w-0 flex-1 h-14 border border-slate-300 bg-white px-5 text-sm font-bold text-slate-900 outline-none transition-all focus:border-red-600 focus:ring-4 focus:ring-red-600/10"
+ />
+ <button type="submit" disabled={orderLookupState === 'loading'} className="h-14 shrink-0 bg-red-600 px-8 text-[11px] font-black tracking-[0.14em] text-white transition-colors hover:bg-red-700 disabled:cursor-wait disabled:bg-red-400">
+ {orderLookupState === 'loading' ? t('Checking...') : t('CHECK STATUS')}
+ </button>
+ </div>
+ </form>
+
+ {orderLookupState === 'not-found' && (
+ <div className="mt-5 border-l-4 border-red-600 bg-red-50 px-5 py-4" role="status">
+ <h3 className="text-sm font-black text-red-700">{t('Order not found')}</h3>
+ <p className="mt-1 text-xs leading-relaxed text-red-600">{t('No order was found for this contract number. Please verify it and try again.')}</p>
+ </div>
+ )}
+ {orderLookupState === 'error' && (
+ <div className="mt-5 border-l-4 border-amber-500 bg-amber-50 px-5 py-4 text-xs font-bold text-amber-700" role="status">{t('Please enter a valid contract number.')}</div>
+ )}
+
+ {orderLookupState === 'found' && orderLookupResult && (
+ <section className="mt-5 border border-slate-200 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.08)]" aria-live="polite">
+ <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 px-6 py-5 md:px-8">
+ <div><span className="block text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">{t('Contract Number')}</span><strong className="mt-1 block text-lg text-slate-900">{orderLookupResult.contractNumber}</strong></div>
+ <div className="sm:text-right"><span className="block text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">{t('Current Status')}</span><strong className="mt-1 block text-sm text-red-600">{t(orderStatusLabels[orderLookupResult.status])}</strong></div>
+ </div>
+ <div className="px-6 py-7 md:px-8 md:py-8">
+ <div className="flex items-end justify-between gap-4 mb-4"><span className="text-xs font-black text-slate-700">{t('Order Progress')}</span><strong className="text-3xl font-black text-slate-900">{orderLookupResult.progress}<span className="text-base text-red-600">%</span></strong></div>
+ <div className="h-3 w-full bg-slate-100 overflow-hidden"><div className="h-full bg-red-600 transition-[width] duration-700" style={{ width: `${orderLookupResult.progress}%` }}></div></div>
+ <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 border-t border-slate-100 pt-6">
+ <div><span className="block text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">{t('Last Updated')}</span><p className="mt-2 text-sm font-bold text-slate-700">{new Date(orderLookupResult.updatedAt).toLocaleString(locale === 'en' ? 'en-US' : locale === 'ru' ? 'ru-RU' : locale === 'es' ? 'es-ES' : 'ar')}</p></div>
+ <div><span className="block text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">{t('Order Note')}</span><p className="mt-2 text-sm leading-relaxed text-slate-600">{orderLookupResult.note || t('No additional update is available.')}</p></div>
+ </div>
+ </div>
+ </section>
+ )}
+ </div>
+ </div>
+ </div>
+ </div>
+
+ {renderFooter()}
+ </div>
+ </div>
+ </div>
+
+ {/* 页面 06: Contact Us (联系我们) */}
  <div id="contact" className="page-wrapper" style={{ display: 'none' }}>
  <div className="page justify-start items-start !p-0 overflow-y-auto overflow-x-hidden" style={{ background: '#f8fafc', display: 'block' }}>
  <div className="scroll-content w-full relative h-max flex-none min-h-screen flex flex-col">
