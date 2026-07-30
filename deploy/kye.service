@@ -1,0 +1,23 @@
+[Unit]
+Description=Lan Chuang website
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/kye/frontend
+Environment=NODE_ENV=production
+EnvironmentFile=/etc/kye.env
+ExecStart=/usr/bin/npm run start -- -p 4012
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/var/lib/kye
+
+[Install]
+WantedBy=multi-user.target

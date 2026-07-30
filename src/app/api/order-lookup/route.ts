@@ -1,5 +1,4 @@
-import { findOrderByContractNumber } from '@/lib/content-domain.mjs';
-import { readContent } from '@/lib/content-store.mjs';
+import { findOrderByContractNumber } from '@/lib/content-store.mjs';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +9,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Please enter a valid contract number.' }, { status: 400 });
   }
 
-  const order = findOrderByContractNumber(await readContent(), contractNumber);
+  const order = await findOrderByContractNumber(contractNumber);
   if (!order) return Response.json({ error: 'Order not found.' }, { status: 404 });
 
   return Response.json({ order }, { headers: { 'Cache-Control': 'no-store' } });

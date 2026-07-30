@@ -3,6 +3,7 @@ import path from 'node:path';
 
 import { isAdminAuthenticated, unauthorized } from '@/lib/admin-server.mjs';
 import { sanitizeFilename, validateImageSignature, validateUpload } from '@/lib/content-domain.mjs';
+import { resolveUploadDirectory } from '@/lib/upload-storage.mjs';
 
 export const runtime = 'nodejs';
 
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
   }
 
   const filename = sanitizeFilename(file.name);
-  const uploadDirectory = path.join(process.cwd(), 'public', 'uploads');
+  const uploadDirectory = resolveUploadDirectory();
   await mkdir(uploadDirectory, { recursive: true });
   await writeFile(path.join(uploadDirectory, filename), bytes);
   return Response.json({ url: `/uploads/${filename}` });

@@ -20,6 +20,11 @@
 # production
 /build
 
+# local SQLite runtime files
+/data/*.sqlite
+/data/*.sqlite-shm
+/data/*.sqlite-wal
+
 # misc
 .DS_Store
 *.pem
@@ -40,3 +45,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# alternate local verification build
+/.next-verify/
+.codex-dev-*.log

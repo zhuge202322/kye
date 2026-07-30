@@ -1,11 +1,7 @@
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import { validateContent } from './content-domain.mjs';
-
-const dataDirectory = path.join(process.cwd(), 'data');
-const contentFile = path.join(dataDirectory, 'site-content.json');
-let writeQueue = Promise.resolve();
+import { createSqliteContentStore } from './sqlite-content-store.mjs';
 
 const imageSlots = [
   ['home.hero.1', '首页', 'Hero 轮播图 1', '/img/hero/metal-fabrication.jpg'],
@@ -84,24 +80,27 @@ export async function createDefaultContent() {
 }
 
 export async function readContent() {
-  try {
-    return JSON.parse(await readFile(contentFile, 'utf8'));
-  } catch (error) {
-    if (error?.code === 'ENOENT') return createDefaultContent();
-    throw error;
-  }
+  return getStore().readContent();
 }
 
 export async function writeContent(content) {
-  const result = validateContent(content);
-  if (!result.ok) throw new Error(result.errors.join(' '));
-  const next = { ...content, version: 1, updatedAt: new Date().toISOString() };
-  writeQueue = writeQueue.then(async () => {
-    await mkdir(dataDirectory, { recursive: true });
-    const temporaryFile = `${contentFile}.tmp`;
-    await writeFile(temporaryFile, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
-    await rename(temporaryFile, contentFile);
-  });
-  await writeQueue;
-  return next;
+  return getStore().writeContent(content);
+}
+
+export async function findOrderByContractNumber(contractNumber) {
+  return getStore().findOrderByContractNumber(contractNumber);
+}
+
+function getStore() {
+  if (!globalThis.__kyeContentStore) {
+    const databasePath = process.env.SQLITE_DATABASE_PATH
+      ? path.resolve(/* turbopackIgnore: true */ process.env.SQLITE_DATABASE_PATH)
+      : path.join(process.cwd(), 'data', 'site-content.sqlite');
+    globalThis.__kyeContentStore = createSqliteContentStore({
+      databasePath,
+      legacyJsonPath: path.join(process.cwd(), 'data', 'site-content.json'),
+      getDefaultContent: createDefaultContent,
+    });
+  }
+  return globalThis.__kyeContentStore;
 }
